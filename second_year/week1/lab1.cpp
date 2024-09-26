@@ -3,14 +3,14 @@
 
 void allocArray(int ***p, int m, int n)
 {
-    *p = (int **)malloc(m * sizeof(int *));  // Allocate memory for row pointers
+    *p = (int **)malloc(m * sizeof(int *));  
     if (*p == NULL)
     {
         printf("Memory allocation failed!\n");
         exit(1);
     }
 
-    for (int i = 0; i < m; i++)
+    for (int i {0}; i < m; i++)
     {
         (*p)[i] = (int *)malloc(n * sizeof(int));
         if ((*p)[i] == NULL)
@@ -24,22 +24,23 @@ void allocArray(int ***p, int m, int n)
 int main(void)
 {
     int **array;
-    int j, k;
 
     allocArray(&array, 5, 10);
 
-    for (j = 0; j < 5; j++)
+    for (int j {0}; j < 5; j++)
     {
-        for (k = 0; k < 10; k++)
+        for (k {0}; k < 10; k++)
             array[j][k] = j * 10 + k;
     }
 
-    for (j = 0; j < 5; j++)
+    for (int j {0}; j < 5; j++)
     {
-        for (k = 0; k < 10; k++)
+        for (k {0}; k < 10; k++)
             printf("%p ", (void *)&(array[j][k]));
     }
 
-    for (j = 0; j < 5; j++)
+    for (int j {0}; j < 5; j++)
         free(array[j]);  
+    
+    free(array);
 }

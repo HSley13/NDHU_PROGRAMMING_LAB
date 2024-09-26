@@ -16,7 +16,7 @@ public:
 
 void freeArray(int **p, int rows)
 {
-    for (int i = 0; i < rows; i++)
+    for (int i {0}; i < rows; i++)
         delete[] p[i];
 
     delete[] p;
@@ -26,15 +26,15 @@ int main(void)
 {
     int **array = Memory<int>::allocArray(5, 10);
 
-    for (int j = 0; j < 5; j++)
+    for (int j {0}; j < 5; j++)
     {
-        for (int k = 0; k < 10; k++)
+        for (int k {0}; k < 10; k++)
             array[j][k] = j * 10 + k;
     }
 
-    for (int j = 0; j < 5; j++)
+    for (int j {0}; j < 5; j++)
     {
-        for (int k = 0; k < 10; k++)
+        for (int k {0}; k < 10; k++)
             std::cout << array[j][k] << " ";
     }
 
