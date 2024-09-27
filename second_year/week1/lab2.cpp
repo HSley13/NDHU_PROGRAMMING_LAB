@@ -7,20 +7,15 @@ public:
     static T **allocArray(int m, int n)
     {
         T **p = new T*[m];
-        for (int i{0}; i < m; i++)
-            p[i] = new T[n];
+        
+        T *block = new T[m * n];
+
+        for(int i{0}; i < m; i++)
+          p[i] = block + i * n;
 
         return p;
     }
 };
-
-void freeArray(int **p, int rows)
-{
-    for (int i {0}; i < rows; i++)
-        delete[] p[i];
-
-    delete[] p;
-}
 
 int main(void)
 {
@@ -38,5 +33,6 @@ int main(void)
             std::cout << array[j][k] << " ";
     }
 
-    freeArray(array, 5);
+    delete[] array[0];
+    delete[] array;
 }
