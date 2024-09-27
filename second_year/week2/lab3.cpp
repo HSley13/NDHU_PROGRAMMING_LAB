@@ -13,10 +13,20 @@ public:
 
     int push(int data)
     {
+      if(top == SIZE) return -1;
+    
+      this->data[top] = data;
+      top++;
+
+      return 1;
     }
 
     int *pop()
     {
+      if(top == 0) return nullptr;
+
+      top--;
+      return &data[top];
     }
 
 private:
@@ -42,12 +52,12 @@ int main(void)
             std::cout << "Please input a integer data:";
             std::cin >> data;
 
-            (stack->push(data) == 1) ? std::cout << "Successfully push data " << data << " into stack.\n"; : std::cout << "Failed to push data into stack.\n";
+            (stack->push(data) == 1) ? std::cout << "Successfully push data " << data << " into stack." << std::endl : std::cout << "Failed to push data into stack." << std::endl;
         }
-        else(strcmp(command, "pop") == 0) 
+        else if(strcmp(command, "pop") == 0) 
         {
             temp = stack->pop();
-            (temp == NULL) ? std::cout << "Failed to pop a data from stack.\n"; : std::cout << "Pop data " << *temp << " from stack.\n" << endl;
+            (temp == NULL) ? std::cout << "Failed to pop a data from stack." << std::endl : std::cout << "Pop data " << *temp << " from stack.\n" << std::endl;
         }
     }
 }
