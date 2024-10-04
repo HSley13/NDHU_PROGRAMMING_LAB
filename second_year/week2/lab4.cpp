@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cstring>
 
-#define SIZE 100
+#define SIZE 3
 
 class Queue
 {
@@ -10,25 +10,29 @@ public:
     {
         top = 0;
         bot = -1;
+        count = 0;
     }
 
     int enqueue(int data)
     {
-        if((top + 1) % SIZE == bot)
+        if (count == SIZE)
             return -1; 
         
         this->data[top] = data;
         top = (top + 1) % SIZE;
+
+        count++;
 
         return 1;
     }
 
     int *dequeue()
     {
-        if(top == bot)
+        if (count == 0)
             return nullptr; 
 
         bot = (bot + 1) % SIZE; 
+        count--;
 
         return &data[bot];  
     }

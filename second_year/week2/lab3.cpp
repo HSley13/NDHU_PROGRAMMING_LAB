@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cstring>
 
-#define SIZE 100
+#define SIZE 3
 
 class Stack
 {
@@ -25,8 +25,9 @@ public:
     {
       if(top == 0) return nullptr;
 
+      int *temp = &data[top - 1];
       top--;
-      return &data[top];
+      return temp;
     }
 
 private:
