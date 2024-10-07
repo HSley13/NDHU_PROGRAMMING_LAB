@@ -58,18 +58,16 @@ class List {
         Node *current{list};
         bool swap{false};
 
-        do {
-            while (current != nullptr && current->getNext() != nullptr) {
-                if (current->getData() > current->getNext()->getData()) {
-                    int temp = current->getData();
-                    current->setData(current->getNext()->getData());
-                    current->getNext()->setData(temp);
+        while (current != nullptr && current->getNext() != nullptr) {
+            if (current->getData() > current->getNext()->getData()) {
+                int temp = current->getData();
+                current->setData(current->getNext()->getData());
+                current->getNext()->setData(temp);
 
-                    swap = true;
-                }
-                current = current->getNext();
+                swap = true;
             }
-        } while (swap);
+            current = current->getNext();
+        }
     }
 
     void selectionSort() {
@@ -96,28 +94,25 @@ class List {
     }
 
     void insertionSort() {
-        Node *current{list};
-        Node *sorted{nullptr};
+        Node *sorted = new Node(0);
+        Node *current = list;
 
         while (current != nullptr) {
             Node *next = current->getNext();
 
-            if (sorted == nullptr || current->getData() < sorted->getData()) {
-                current->setNext(sorted);
-                sorted = current;
-            } else {
-                Node *sorted_current = sorted;
-
-                while (sorted_current->getNext() != nullptr && sorted_current->getNext()->getData() < current->getData()) {
-                    sorted_current = sorted_current->getNext();
-                }
-
-                current->setNext(sorted_current->getNext());
-                sorted_current->setNext(current);
+            Node *temp = sorted;
+            while (temp->getNext() != nullptr && temp->getNext()->getData() < current->getData()) {
+                temp = temp->getNext();
             }
+
+            current->setNext(temp->getNext());
+            temp->setNext(current);
+
             current = next;
         }
-        list = sorted;
+
+        list = sorted->getNext();
+        delete sorted;
     }
 
     void print() {
