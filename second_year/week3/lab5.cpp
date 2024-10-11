@@ -55,22 +55,27 @@ class List {
     }
 
     void bubbleSort() {
+        if (list == nullptr || list->getNext() == nullptr) {
+            return;
+        }
+
         Node *current{list};
-        bool swap{false};
 
         while (current != nullptr && current->getNext() != nullptr) {
             if (current->getData() > current->getNext()->getData()) {
                 int temp = current->getData();
                 current->setData(current->getNext()->getData());
                 current->getNext()->setData(temp);
-
-                swap = true;
             }
             current = current->getNext();
         }
     }
 
     void selectionSort() {
+        if (list == nullptr || list->getNext() == nullptr) {
+            return;
+        }
+
         Node *current{list};
 
         while (current != nullptr) {
@@ -94,6 +99,10 @@ class List {
     }
 
     void insertionSort() {
+        if (list == nullptr || list->getNext() == nullptr) {
+            return;
+        }
+
         Node *sorted = new Node(0);
         Node *current = list;
 
