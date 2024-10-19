@@ -44,7 +44,7 @@ class List {
     }
 
     void generate() {
-        Node *buf = new Node(rand());
+        Node *buf = new Node(rand() % 10);
 
         buf->setNext(list);
 
@@ -64,7 +64,6 @@ class List {
         Node *prev2 = node2->getPre();
         Node *next2 = node2->getNext();
 
-        // Special case: If the nodes are adjacent, swap differently
         if (node1->getNext() == node2) {
             node1->setNext(next2);
             node1->setPre(node2);
@@ -80,8 +79,7 @@ class List {
             if (next2 != nullptr) {
                 next2->setPre(node1);
             }
-        } else if (node2->getNext() == node1) // Handle the case where node2 is before node1
-        {
+        } else if (node2->getNext() == node1) {
             node2->setNext(next1);
             node2->setPre(node1);
             node1->setNext(node2);
@@ -96,9 +94,7 @@ class List {
             if (next1 != nullptr) {
                 next1->setPre(node2);
             }
-        } else // General case for non-adjacent nodes
-        {
-            // Swap next and prev pointers for non-adjacent nodes
+        } else {
             if (prev1 != nullptr) {
                 prev1->setNext(node2);
             } else {
@@ -131,13 +127,17 @@ class List {
             return;
         }
 
-        Node *current{list};
-
-        while (current != nullptr && current->getNext() != nullptr) {
-            if (current->getData() > current->getNext()->getData()) {
-                swapNodes(current, current->getNext());
+        bool swap{true};
+        while (swap) {
+            Node *current{list};
+            swap = false;
+            while (current != nullptr && current->getNext() != nullptr) {
+                if (current->getData() > current->getNext()->getData()) {
+                    swapNodes(current, current->getNext());
+                    swap = true;
+                }
+                current = current->getNext();
             }
-            current = current->getNext();
         }
     }
 
@@ -146,23 +146,28 @@ class List {
             return;
         }
 
-        Node *current{list};
+        Node *current = list;
 
         while (current != nullptr) {
-            Node *min{current};
-            Node *next{current->getNext()};
+            Node *min = current;
+            Node *next = current->getNext();
 
             while (next != nullptr) {
-                if (min->getData() > next->getData())
+                if (next->getData() < min->getData()) {
                     min = next;
+                }
 
                 next = next->getNext();
             }
 
-            if (min != current)
-                swapNodes(current, min);
+            if (min != current) {
+                swapNodes(min, current);
 
-            current = min->getNext();
+                Node *temp = current;
+                current = min;
+                min = temp;
+            }
+            current = current->getNext();
         }
     }
 
@@ -175,16 +180,40 @@ class List {
 
         while (current != nullptr) {
             Node *next = current->getNext();
-            Node *pos = list;
+            Node *search = list;
 
-            while (pos != current && pos->getData() < current->getData()) {
-                pos = pos->getNext();
+            // Find the correct position in the sorted part of the list
+            while (search != current && search->getData() < current->getData()) {
+                search = search->getNext();
             }
 
-            if (pos != current) {
-                swapNodes(current, pos);
-            }
+            // If search node is different from current, we need to move current to the correct position
+            if (search != current) {
+                // Detach current node
+                Node *prev = current->getPre();
+                Node *nextCurrent = current->getNext();
 
+                if (prev != nullptr) {
+                    prev->setNext(nextCurrent);
+                }
+
+                if (nextCurrent != nullptr) {
+                    nextCurrent->setPre(prev);
+                }
+
+                // Insert current node before search node
+                Node *searchPrev = search->getPre();
+
+                current->setNext(search);
+                current->setPre(searchPrev);
+
+                if (searchPrev != nullptr) {
+                    searchPrev->setNext(current);
+                } else {
+                    list = current;
+                }
+                search->setPre(current);
+            }
             current = next;
         }
     }
@@ -197,7 +226,6 @@ class List {
 
             cur = cur->getNext();
         }
-
         std::cout << std::endl;
     }
 
@@ -213,14 +241,16 @@ int main(void) {
     l->print();
     l->bubbleSort();
     l->print();
-
-    l = new List(10);
-    l->print();
-    l->insertionSort();
-    l->print();
+    std::cout << std::endl;
 
     l = new List(10);
     l->print();
     l->selectionSort();
+    l->print();
+    std::cout << std::endl;
+
+    l = new List(10);
+    l->print();
+    l->insertionSort();
     l->print();
 }

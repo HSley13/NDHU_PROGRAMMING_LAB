@@ -74,15 +74,15 @@ class List {
     }
 
     void printPath() {
-        for (int j = 1; j < top; j++) {
+        for (int j{1}; j < top; j++) {
             if (data[j] == data[j - 1]->getDir(UP)) {
-                std::cout << "UP\n";
+                std::cout << "UP" << std::endl;
             } else if (data[j] == data[j - 1]->getDir(DOWN)) {
-                std::cout << "DOWN\n";
+                std::cout << "DOWN" << std::endl;
             } else if (data[j] == data[j - 1]->getDir(LEFT)) {
-                std::cout << "LEFT\n";
+                std::cout << "LEFT" << std::endl;
             } else if (data[j] == data[j - 1]->getDir(RIGHT)) {
-                std::cout << "RIGHT\n";
+                std::cout << "RIGHT" << std::endl;
             }
         }
     }
@@ -95,6 +95,7 @@ class List {
 class Maze {
   public:
     Maze() {
+        std::srand(std::time(0));
         initMaze(SIZE);
     }
 
@@ -117,7 +118,6 @@ class Maze {
                     current->setDir(RIGHT, newGrid.get());
                     newGrid->setDir(LEFT, current);
                 }
-
                 current = newGrid.release();
             }
 
@@ -131,32 +131,6 @@ class Maze {
             }
         }
     }
-
-    std::unique_ptr<List> getPath() {
-        std::unique_ptr<List> path = std::make_unique<List>();
-        if (findPath(maze.get(), path.get())) {
-            return path;
-        }
-        return std::make_unique<List>();
-    }
-
-    void printMaze() {
-        Grid *j = maze.get();
-        Grid *k;
-
-        while (j != nullptr) {
-            k = j;
-            while (k != nullptr) {
-                std::cout << (k->getState() == 1 ? "#" : ".");
-                k = k->getDir(RIGHT);
-            }
-            std::cout << std::endl;
-            j = j->getDir(DOWN);
-        }
-    }
-
-  private:
-    std::unique_ptr<Grid> maze;
 
     bool findPath(Grid *current, List *path) {
         if (current == nullptr || current->getState() == 1 || current->isVisited())
@@ -175,17 +149,44 @@ class Maze {
         path->removeElement();
         return false;
     }
+
+    std::unique_ptr<List> getPath() {
+        std::unique_ptr<List> path = std::make_unique<List>();
+        if (findPath(maze.get(), path.get())) {
+            return path;
+        }
+        return std::make_unique<List>();
+    }
+
+    void printMaze() {
+        Grid *j = maze.get();
+        Grid *k = nullptr;
+
+        while (j != nullptr) {
+            k = j;
+            while (k != nullptr) {
+                std::cout << (k->getState() == 1 ? "#" : ".");
+                k = k->getDir(RIGHT);
+            }
+            std::cout << std::endl;
+            j = j->getDir(DOWN);
+        }
+    }
+
+  private:
+    std::unique_ptr<Grid> maze;
 };
 
 int main(void) {
+
     std::unique_ptr<Maze> maze = std::make_unique<Maze>();
     maze->printMaze();
 
     std::unique_ptr<List> path = maze->getPath();
     if (path->removeElement() != nullptr) {
-        std::cout << "Path found:\n";
+        std::cout << "Path found:" << std::endl;
         path->printPath();
     } else {
-        std::cout << "No path found.\n";
+        std::cout << "No path found." << std::endl;
     }
 }

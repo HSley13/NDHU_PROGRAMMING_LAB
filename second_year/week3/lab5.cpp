@@ -44,7 +44,7 @@ class List {
     }
 
     void generate() {
-        Node *buf = new Node(rand());
+        Node *buf = new Node(rand() % 10);
 
         buf->setNext(list);
 
@@ -59,15 +59,19 @@ class List {
             return;
         }
 
-        Node *current{list};
-
-        while (current != nullptr && current->getNext() != nullptr) {
-            if (current->getData() > current->getNext()->getData()) {
-                int temp = current->getData();
-                current->setData(current->getNext()->getData());
-                current->getNext()->setData(temp);
+        bool swap{true};
+        while (swap) {
+            Node *current{list};
+            swap = false;
+            while (current->getNext() != nullptr) {
+                if (current->getData() > current->getNext()->getData()) {
+                    int temp = current->getData();
+                    current->setData(current->getNext()->getData());
+                    current->getNext()->setData(temp);
+                    swap = true;
+                }
+                current = current->getNext();
             }
-            current = current->getNext();
         }
     }
 
@@ -114,13 +118,27 @@ class List {
                 temp = temp->getNext();
             }
 
-            current->setNext(temp->getNext());
+            if (temp != current) {
+                int temp2 = current->getData();
+                current->setData(temp->getData());
+                temp->setData(temp2);
+            }
+
+            if (current->getPre())
+                current->getPre()->setNext(current->getNext());
+            if (current->getNext())
+                current->getNext()->setPre(current->getPre());
+
+            current->setPre(temp);
+            if (temp->getNext())
+                temp->getNext()->setPre(current);
             temp->setNext(current);
 
             current = next;
         }
 
         list = sorted->getNext();
+        list->setPre(nullptr);
         delete sorted;
     }
 
@@ -148,11 +166,13 @@ int main(void) {
     l->print();
     l->bubbleSort();
     l->print();
+    std::cout << std::endl;
 
     l = new List(10);
     l->print();
     l->insertionSort();
     l->print();
+    std::cout << std::endl;
 
     l = new List(10);
     l->print();

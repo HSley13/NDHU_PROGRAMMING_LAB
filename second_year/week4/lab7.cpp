@@ -38,7 +38,7 @@ class Node {
 class List {
   public:
     List() {
-        top{0};
+        top = 0;
     }
 
     void addElement(int r, int c) {
@@ -48,13 +48,14 @@ class List {
     }
 
     void removeElement() {
-        if (top > 0) {
-            top--;
+        if (top == 0) {
+            return;
         }
+        top--;
     }
 
     void printList() const {
-        for (int i{0}; i < top; ++i) {
+        for (int i{0}; i < top; i++) {
             std::cout << "(" << data[i]->getRow() << ", " << data[i]->getCol() << ")" << std::endl;
         }
     }
@@ -74,15 +75,15 @@ class Maze {
     void initMaze(int s) {
         maze = std::make_unique<std::unique_ptr<int[]>[]>(s);
 
-        for (int i{0}; i < s; ++i) {
+        for (int i{0}; i < s; i++) {
             maze[i] = std::make_unique<int[]>(s);
-            for (int j{0}; j < s; ++j) {
+            for (int j{0}; j < s; j++) {
                 maze[i][j] = (std::rand() % 100 < 20) ? 1 : 0;
             }
         }
 
-        maze[0][0]{0};
-        maze[s - 1][s - 1]{0};
+        maze[0][0] = 0;
+        maze[s - 1][s - 1] = 0;
     }
 
     std::unique_ptr<List> getPath() {
@@ -121,15 +122,15 @@ class Maze {
     }
 
     void printMaze() const {
-        for (int i{0}; i < SIZE; ++i) {
-            for (int j{0}; j < SIZE; ++j) {
+        for (int i{0}; i < SIZE; i++) {
+            for (int j{0}; j < SIZE; j++) {
                 if (maze[i][j] == 0) {
                     std::cout << " ";
                 } else if (maze[i][j] == 1) {
                     std::cout << "*";
                 }
             }
-            std::cout << "\n";
+            std::cout << std::endl;
         }
     }
 
