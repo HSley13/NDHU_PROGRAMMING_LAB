@@ -1,29 +1,36 @@
 #include <cmath>
 #include <iostream>
 #include <memory>
+#include <queue>
+#include <vector>
 
 template <class T>
 class BinaryTreeInArray {
   public:
-    BinaryTreeInArray() : height(0), numOfElement(0) {}
+    BinaryTreeInArray() : height(0), numOfElement(0) {
+    }
 
     void addElementAsCompleteTree(T data) {
         int cap = pow(2, height) - 1;
 
-        if (numOfElement + 1 > cap)
+        if (numOfElement + 1 > cap) {
             resize((cap + 1) * 2 - 1);
+        }
 
         array[numOfElement] = data;
         numOfElement++;
     }
 
     void displayInorder() {
+        displayInOrderHelper(0);
     }
 
     void displayPreorder() {
+        displayInPreorderHelper(0);
     }
 
     void displayPostorder() {
+        displayInPostorderHelper(0);
     }
 
   private:
@@ -35,29 +42,71 @@ class BinaryTreeInArray {
         array.resize(size);
         height++;
     }
+
+    void displayInOrderHelper(int index) {
+        if (index >= numOfElement) {
+            return;
+        }
+
+        displayInOrderHelper(2 * index + 1);
+        std::cout << array[index] << " ";
+        displayInOrderHelper(2 * index + 2);
+    }
+
+    void displayInPreorderHelper(int index) {
+        if (index >= numOfElement) {
+            return;
+        }
+
+        std::cout << array[index] << " ";
+        displayInPreorderHelper(2 * index + 1);
+        displayInPreorderHelper(2 * index + 2);
+    }
+
+    void displayInPostorderHelper(int index) {
+        if (index >= numOfElement) {
+            return;
+        }
+
+        displayInPostorderHelper(2 * index + 1);
+        displayInPostorderHelper(2 * index + 2);
+        std::cout << array[index] << " ";
+    }
 };
 
 template <class T>
 class BinaryTreeInLinkedList {
   public:
-    BinaryTreeInLinkedList() : root(nullptr), numOfElement(0) {}
+    BinaryTreeInLinkedList() : root(nullptr), numOfElement(0) {
+    }
 
     void addElementAsCompleteTree(T data) {
+        if (!root) {
+            root = std::make_shared<TreeNode>(data);
+        } else {
+            addHelper(root, data);
+        }
+        numOfElement++;
     }
 
     void displayInorder() {
+        displayInOrderHelper(root);
     }
 
     void displayPreorder() {
+        displayInPreorderHelper(root);
     }
 
     void displayPostorder() {
+        displayInPostorderHelper(root);
     }
 
   private:
     class TreeNode {
       public:
-        TreeNode(T d) : data(d), left(nullptr), right(nullptr) {}
+        TreeNode(T d) : data(d), left(nullptr), right(nullptr) {
+        }
+
         std::shared_ptr<TreeNode> left;
         std::shared_ptr<TreeNode> right;
         T data;
@@ -65,6 +114,60 @@ class BinaryTreeInLinkedList {
 
     std::shared_ptr<TreeNode> root;
     int numOfElement;
+
+    void addHelper(std::shared_ptr<TreeNode> node, T data) {
+        std::queue<std::shared_ptr<TreeNode>> q;
+        q.push(node);
+
+        while (!q.empty()) {
+            std::shared_ptr<TreeNode> current = q.front();
+            q.pop();
+
+            if (!current->left) {
+                current->left = std::make_shared<TreeNode>(data);
+                return;
+            } else {
+                q.push(current->left);
+            }
+
+            if (!current->right) {
+                current->right = std::make_shared<TreeNode>(data);
+                return;
+            } else {
+                q.push(current->right);
+            }
+        }
+    }
+
+    void displayInOrderHelper(std::shared_ptr<TreeNode> node) {
+        if (!node) {
+            return;
+        }
+
+        displayInOrderHelper(node->left);
+        std::cout << node->data << " ";
+        displayInOrderHelper(node->right);
+    }
+
+    void displayInPreorderHelper(std::shared_ptr<TreeNode> node) {
+        if (!node) {
+            return;
+        }
+
+        std::cout << node->data << " ";
+        displayInPreorderHelper(node->left);
+        displayInPreorderHelper(node->right);
+    }
+
+    void displayInPostorderHelper(std::shared_ptr<TreeNode> node) {
+        if (!node) {
+            return;
+        }
+
+        displayInPostorderHelper(node->left);
+        displayInPostorderHelper(node->right);
+        std::cout << node->data << " ";
+    }
 };
 
 int main(void) {
