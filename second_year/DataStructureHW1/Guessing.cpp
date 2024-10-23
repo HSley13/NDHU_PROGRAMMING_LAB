@@ -38,10 +38,8 @@ class NumberGuessing {
 };
 
 int main(void) {
-    std::srand(static_cast<unsigned int>(std::time(0)));
-
     NumberGuessing new_game;
-    new_game.Set(std::rand() % 100 + 1);
+    new_game.Set(80);
 
     int guess;
     std::cout << "Guess a number between 1 and 100: ";

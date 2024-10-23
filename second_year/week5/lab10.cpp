@@ -1,26 +1,26 @@
 #include <iostream>
+#include <memory>
 #include <vector>
 
 template <class T>
 class TreeInLinkedList {
   public:
     TreeInLinkedList() {
-        nodeList = new std::vector<TreeNode *>();
+        nodeList = std::make_shared<std::vector<std::shared_ptr<TreeNode>>>();
     }
 
     void addElement(T data) {
         int k = nodeList->size();
+
         if (data == 1) {
             nodeList->clear();
-
-            nodeList = new std::vector<TreeNode *>();
-            TreeNode *newNode = new TreeNode(data, nullptr);
-
+            nodeList = std::make_shared<std::vector<std::shared_ptr<TreeNode>>>();
+            std::shared_ptr<TreeNode> newNode = std::make_shared<TreeNode>(data, nullptr);
             nodeList->push_back(newNode);
         } else {
             for (int j{0}; j < k; j++) {
                 if (data % (*nodeList)[j]->data == 0) {
-                    TreeNode *newNode = new TreeNode(data, (*nodeList)[j]);
+                    std::shared_ptr<TreeNode> newNode = std::make_shared<TreeNode>(data, (*nodeList)[j]);
                     nodeList->push_back(newNode);
                 }
             }
@@ -28,31 +28,33 @@ class TreeInLinkedList {
     }
 
     void displayPreorder() {
+        // Implementation here
     }
 
     void displayPostorder() {
+        // Implementation here
     }
 
   private:
     class TreeNode {
-      private:
       public:
-        TreeNode(T d, TreeNode *p) : data(d), parent(p) {}
-        TreeNode *parent;
+        TreeNode(T d, std::shared_ptr<TreeNode> p) : data(d), parent(p) {}
+        std::shared_ptr<TreeNode> parent;
         T data;
     };
 
-    std::vector<TreeNode *> *nodeList;
+    std::shared_ptr<std::vector<std::shared_ptr<TreeNode>>> nodeList;
 };
 
 int main(void) {
-    TreeInLinkedList<int> *tree = new TreeInLinkedList<int>();
+    std::unique_ptr<TreeInLinkedList<int>> tree = std::make_unique<TreeInLinkedList<int>>();
 
     int n;
     std::cin >> n;
 
-    for (int j{1}; j <= n; j++)
+    for (int j{1}; j <= n; j++) {
         tree->addElement(j);
+    }
 
     tree->displayPreorder();
     std::cout << std::endl;

@@ -1,10 +1,11 @@
 #include <cmath>
 #include <iostream>
+#include <memory>
 
 template <class T>
 class BinaryTreeInArray {
   public:
-    BinaryTreeInArray() : array(nullptr), height(0), numOfElement(0) {}
+    BinaryTreeInArray() : height(0), numOfElement(0) {}
 
     void addElementAsCompleteTree(T data) {
         int cap = pow(2, height) - 1;
@@ -26,25 +27,13 @@ class BinaryTreeInArray {
     }
 
   private:
-    T *array;
+    std::vector<T> array;
     int height;
     int numOfElement;
 
     void resize(int size) {
-        T *temp = new T[numOfElement];
-
-        for (int j{0}; j < numOfElement; j++)
-            temp[j] = array[j];
-
-        delete array;
-
-        array = new T[static_cast<int>(pow(2, height + 1)) - 1];
-
-        for (int j{0}; j < numOfElement; j++)
-            array[j] = temp[j];
-
+        array.resize(size);
         height++;
-        delete[] temp;
     }
 };
 
@@ -69,17 +58,18 @@ class BinaryTreeInLinkedList {
     class TreeNode {
       public:
         TreeNode(T d) : data(d), left(nullptr), right(nullptr) {}
-        TreeNode *left, *right;
+        std::shared_ptr<TreeNode> left;
+        std::shared_ptr<TreeNode> right;
         T data;
     };
 
-    TreeNode *root;
+    std::shared_ptr<TreeNode> root;
     int numOfElement;
 };
 
 int main(void) {
-    BinaryTreeInArray<int> *b = new BinaryTreeInArray<int>;
-    BinaryTreeInLinkedList<int> *tree = new BinaryTreeInLinkedList<int>;
+    std::unique_ptr<BinaryTreeInArray<int>> b = std::make_unique<BinaryTreeInArray<int>>();
+    std::unique_ptr<BinaryTreeInLinkedList<int>> tree = std::make_unique<BinaryTreeInLinkedList<int>>();
 
     int n;
     std::cin >> n;
