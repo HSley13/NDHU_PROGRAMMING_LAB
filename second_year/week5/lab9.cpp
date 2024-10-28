@@ -77,12 +77,12 @@ class BinaryTreeInArray {
 template <class T>
 class BinaryTreeInLinkedList {
   public:
-    BinaryTreeInLinkedList() : root(nullptr), numOfElement(0) {
+    BinaryTreeInLinkedList() : numOfElement(0) {
     }
 
     void addElementAsCompleteTree(T data) {
         if (!root) {
-            root = std::make_shared<TreeNode>(data);
+            root = std::make_unique<TreeNode>(data);
         } else {
             addHelper(root, data);
         }
@@ -104,42 +104,41 @@ class BinaryTreeInLinkedList {
   private:
     class TreeNode {
       public:
-        TreeNode(T d) : data(d), left(nullptr), right(nullptr) {
-        }
+        TreeNode(T d) : data(d) {}
 
-        std::shared_ptr<TreeNode> left;
-        std::shared_ptr<TreeNode> right;
+        std::unique_ptr<TreeNode> left;
+        std::unique_ptr<TreeNode> right;
         T data;
     };
 
-    std::shared_ptr<TreeNode> root;
+    std::unique_ptr<TreeNode> root;
     int numOfElement;
 
-    void addHelper(std::shared_ptr<TreeNode> node, T data) {
-        std::queue<std::shared_ptr<TreeNode>> q;
-        q.push(node);
+    void addHelper(std::unique_ptr<TreeNode> &node, T data) {
+        std::queue<TreeNode *> q;
+        q.push(node.get());
 
         while (!q.empty()) {
-            std::shared_ptr<TreeNode> current = q.front();
+            TreeNode *current = q.front();
             q.pop();
 
             if (!current->left) {
-                current->left = std::make_shared<TreeNode>(data);
+                current->left = std::make_unique<TreeNode>(data);
                 return;
             } else {
-                q.push(current->left);
+                q.push(current->left.get());
             }
 
             if (!current->right) {
-                current->right = std::make_shared<TreeNode>(data);
+                current->right = std::make_unique<TreeNode>(data);
                 return;
             } else {
-                q.push(current->right);
+                q.push(current->right.get());
             }
         }
     }
 
-    void displayInOrderHelper(std::shared_ptr<TreeNode> node) {
+    void displayInOrderHelper(const std::unique_ptr<TreeNode> &node) {
         if (!node) {
             return;
         }
@@ -149,7 +148,7 @@ class BinaryTreeInLinkedList {
         displayInOrderHelper(node->right);
     }
 
-    void displayInPreorderHelper(std::shared_ptr<TreeNode> node) {
+    void displayInPreorderHelper(const std::unique_ptr<TreeNode> &node) {
         if (!node) {
             return;
         }
@@ -159,7 +158,7 @@ class BinaryTreeInLinkedList {
         displayInPreorderHelper(node->right);
     }
 
-    void displayInPostorderHelper(std::shared_ptr<TreeNode> node) {
+    void displayInPostorderHelper(const std::unique_ptr<TreeNode> &node) {
         if (!node) {
             return;
         }

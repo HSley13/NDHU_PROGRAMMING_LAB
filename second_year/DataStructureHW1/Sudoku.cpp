@@ -86,10 +86,10 @@ class SudokuSolver {
 };
 
 int main(void) {
-    std::vector<std::vector<int>> initialBoard = {{1, 2, 3, 4},
+    std::vector<std::vector<int>> initialBoard = {{1, 2, 0, 0},
                                                   {3, 4, 0, 0},
-                                                  {2, 0, 4, 0},
-                                                  {4, 0, 0, 1}};
+                                                  {2, 1, 4, 3},
+                                                  {4, 3, 2, 1}};
 
     SudokuSolver solver(initialBoard);
 

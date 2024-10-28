@@ -22,17 +22,22 @@ class TreeInLinkedList {
                 if (data % (*nodeList)[j]->data == 0) {
                     std::shared_ptr<TreeNode> newNode = std::make_shared<TreeNode>(data, (*nodeList)[j]);
                     nodeList->push_back(newNode);
+                    break;
                 }
             }
         }
     }
 
     void displayPreorder() {
-        // Implementation here
+        if (!nodeList->empty()) {
+            preorderHelper((*nodeList)[0]);
+        }
     }
 
     void displayPostorder() {
-        // Implementation here
+        if (!nodeList->empty()) {
+            postorderHelper((*nodeList)[0]);
+        }
     }
 
   private:
@@ -44,6 +49,32 @@ class TreeInLinkedList {
     };
 
     std::shared_ptr<std::vector<std::shared_ptr<TreeNode>>> nodeList;
+
+    void preorderHelper(std::shared_ptr<TreeNode> node) {
+        if (!node) {
+            return;
+        }
+
+        std::cout << node->data << " ";
+        for (std::shared_ptr<TreeNode> child : *nodeList) {
+            if (child->parent == node) {
+                preorderHelper(child);
+            }
+        }
+    }
+
+    void postorderHelper(std::shared_ptr<TreeNode> node) {
+        if (!node) {
+            return;
+        }
+
+        for (std::shared_ptr<TreeNode> child : *nodeList) {
+            if (child->parent == node) {
+                postorderHelper(child);
+            }
+        }
+        std::cout << node->data << " ";
+    }
 };
 
 int main(void) {
