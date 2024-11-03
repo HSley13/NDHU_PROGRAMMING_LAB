@@ -14,6 +14,7 @@ class SudokuSolver {
             }
             std::cout << std::endl;
         }
+        // Line to remove before submitting cause a new line isn't required after each print
         std::cout << std::endl;
     }
 

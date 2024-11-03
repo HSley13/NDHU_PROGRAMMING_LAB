@@ -1,18 +1,17 @@
-#include <iostream>
-#include <vector>
 #include <algorithm>
 #include <cmath>
+#include <iostream>
+#include <vector>
 
 #define MAX_N_COORD 100
 
-class Coord
-{
+class Coord {
     int x, y;
 
-public:
-    Coord() : x(0), y(0){};
-    Coord(int _x, int _y) : x(_x), y(_y){};
-    Coord(const Coord &c) : x(c.x), y(c.y){};
+  public:
+    Coord() : x(0), y(0) {};
+    Coord(int _x, int _y) : x(_x), y(_y) {};
+    Coord(const Coord &c) : x(c.x), y(c.y) {};
     void setX(int new_x) { x = new_x; };
     int getX() { return x; }
     void setY(int newY) { y = newY; };
@@ -22,8 +21,7 @@ public:
 
     bool operator>(const Coord &other) const { return (x > other.x || (x == other.x && y > other.y)); }
 
-    Coord &operator=(const Coord &other)
-    {
+    Coord &operator=(const Coord &other) {
         this->x = other.x;
         this->y = other.y;
 
@@ -32,22 +30,19 @@ public:
 
     friend double get_distance(Coord &start, Coord &end) { return sqrt(pow(end.getX() - start.getX(), 2) + pow(end.getY() - start.getY(), 2)); };
 
-    friend std::ostream &operator<<(std::ostream &out, const Coord &c)
-    {
+    friend std::ostream &operator<<(std::ostream &out, const Coord &c) {
         out << "(" << c.x << ", " << c.y << ")";
         return out;
     }
 };
 
-std::vector<Coord> input_coordinates(int n, int *y_max)
-{
+std::vector<Coord> input_coordinates(int n, int *y_max) {
     std::vector<Coord> coords;
     int x, y;
 
     coords.push_back(Coord(0, 0));
 
-    while (--n >= 0)
-    {
+    while (--n >= 0) {
         std::cin >> x >> y;
         *y_max = (y > *y_max) ? y : *y_max;
 
@@ -59,17 +54,14 @@ std::vector<Coord> input_coordinates(int n, int *y_max)
     return coords;
 };
 
-double get_distance(std::vector<Coord> &coords, int y_max)
-{
+double get_distance(std::vector<Coord> &coords, int y_max) {
     int temp_y_max = 0;
     double sum = 0;
 
     Coord a, b, c;
 
-    for (int i = 1; i < coords.size() && temp_y_max != y_max; i++)
-    {
-        if (coords[i].getY() > temp_y_max)
-        {
+    for (int i = 1; i < coords.size() && temp_y_max != y_max; i++) {
+        if (coords[i].getY() > temp_y_max) {
 
             c = coords[i];
             b = coords[i - 1];
@@ -85,8 +77,7 @@ double get_distance(std::vector<Coord> &coords, int y_max)
     return sum;
 }
 
-int main(void)
-{
+int main(void) {
     int test_cases = 0, N = 0, y_max = 0;
     size_t i;
     double d;
@@ -94,8 +85,7 @@ int main(void)
     std::cin >> test_cases;
     test_cases++;
 
-    while (--test_cases)
-    {
+    while (--test_cases) {
         std::cin >> N;
 
         std::vector<Coord> coords = input_coordinates(N, &y_max);

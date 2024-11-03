@@ -1,11 +1,10 @@
 #include <cmath>
 #include <iostream>
 
-class PrimeOrEmirp
-{
+class PrimeOrEmirp {
     int _num;
 
-public:
+  public:
     PrimeOrEmirp(int n);
 
     bool is_prime(int n);
@@ -15,8 +14,7 @@ public:
     bool is_emirp(int n);
 };
 
-PrimeOrEmirp::PrimeOrEmirp(int num) : _num(num)
-{
+PrimeOrEmirp::PrimeOrEmirp(int num) : _num(num) {
     if (!is_prime(_num))
         std::cout << _num << " is not prime." << std::endl;
 
@@ -27,13 +25,11 @@ PrimeOrEmirp::PrimeOrEmirp(int num) : _num(num)
         std::cout << _num << " is emirp." << std::endl;
 };
 
-bool PrimeOrEmirp::is_prime(int n)
-{
+bool PrimeOrEmirp::is_prime(int n) {
     if (n <= 1)
         return false;
 
-    for (int i = 2; i < std::sqrt(n); i++)
-    {
+    for (int i = 2; i < std::sqrt(n); i++) {
         if (n % i == 0)
             return false;
     }
@@ -41,20 +37,17 @@ bool PrimeOrEmirp::is_prime(int n)
     return true;
 }
 
-int PrimeOrEmirp::reverse(int n)
-{
+int PrimeOrEmirp::reverse(int n) {
     int r = 0;
     int temp = n;
-    while (temp)
-    {
+    while (temp) {
         r = r * 10 + temp % 10;
         temp /= 10;
     }
     return r;
 }
 
-bool PrimeOrEmirp::is_emirp(int n)
-{
+bool PrimeOrEmirp::is_emirp(int n) {
     if (!is_prime(n))
         return false;
 
@@ -62,8 +55,7 @@ bool PrimeOrEmirp::is_emirp(int n)
     return rev != n && is_prime(rev);
 }
 
-int main(void)
-{
+int main(void) {
     int test_case;
 
     while (std::cin >> test_case)

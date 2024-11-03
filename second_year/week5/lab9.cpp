@@ -7,8 +7,7 @@
 template <class T>
 class BinaryTreeInArray {
   public:
-    BinaryTreeInArray() : height(0), numOfElement(0) {
-    }
+    BinaryTreeInArray() : height(0), numOfElement(0) {}
 
     void addElementAsCompleteTree(T data) {
         int cap = pow(2, height) - 1;
@@ -77,8 +76,7 @@ class BinaryTreeInArray {
 template <class T>
 class BinaryTreeInLinkedList {
   public:
-    BinaryTreeInLinkedList() : numOfElement(0) {
-    }
+    BinaryTreeInLinkedList() : numOfElement(0) {}
 
     void addElementAsCompleteTree(T data) {
         if (!root) {

@@ -1,11 +1,10 @@
 #include <iostream>
-#include <vector>
 #include <set>
 #include <sstream>
+#include <vector>
 
-class date_range
-{
-public:
+class date_range {
+  public:
     int start;
     int end;
 
@@ -18,8 +17,7 @@ public:
     static std::string days_to_date(int days);
 };
 
-int date_range::count_days(int date)
-{
+int date_range::count_days(int date) {
     int year = date / 10000;
     int month = (date % 10000) / 100;
     int day = date % 100;
@@ -27,8 +25,7 @@ int date_range::count_days(int date)
     int days = day;
 
     static const int days_in_month[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-    for (int i = 1; i < month; i++)
-    {
+    for (int i = 1; i < month; i++) {
         days += days_in_month[i];
 
         if (i == 2 && is_leap_year(year))
@@ -41,19 +38,16 @@ int date_range::count_days(int date)
     return days;
 }
 
-std::string date_range::days_to_date(int days)
-{
+std::string date_range::days_to_date(int days) {
     int year = 1700;
-    while (days > 365 + is_leap_year(year))
-    {
+    while (days > 365 + is_leap_year(year)) {
         days -= 365 + is_leap_year(year);
         year++;
     }
 
     static const int days_in_month[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
     int month = 1;
-    while (days > days_in_month[month] + (month == 2 && is_leap_year(year)))
-    {
+    while (days > days_in_month[month] + (month == 2 && is_leap_year(year))) {
         days -= days_in_month[month] + (month == 2 && is_leap_year(year));
         month++;
     }
@@ -65,15 +59,14 @@ std::string date_range::days_to_date(int days)
     return date.str();
 }
 
-class quote_manager
-{
-private:
+class quote_manager {
+  private:
     std::vector<date_range> existing_ranges;
     std::vector<date_range> requested_ranges;
     std::set<int> new_dates;
     std::vector<date_range> new_ranges;
 
-public:
+  public:
     void add_existing_range(int start, int end) { existing_ranges.emplace_back(date_range::count_days(start), date_range::count_days(end)); }
 
     void add_requested_range(int start, int end) { requested_ranges.emplace_back(date_range::count_days(start), date_range::count_days(end)); }
@@ -85,20 +78,16 @@ public:
     void print_new_ranges(int case_number);
 };
 
-void quote_manager::find_new_ranges()
-{
+void quote_manager::find_new_ranges() {
     std::set<int> covered_dates;
 
-    for (const date_range &range : existing_ranges)
-    {
+    for (const date_range &range : existing_ranges) {
         for (int day = range.start; day <= range.end; day++)
             covered_dates.insert(day);
     }
 
-    for (const date_range &range : requested_ranges)
-    {
-        for (int day = range.start; day <= range.end; day++)
-        {
+    for (const date_range &range : requested_ranges) {
+        for (int day = range.start; day <= range.end; day++) {
             if (covered_dates.find(day) == covered_dates.end())
                 new_dates.insert(day);
         }
@@ -107,8 +96,7 @@ void quote_manager::find_new_ranges()
     merge_new_ranges();
 }
 
-void quote_manager::merge_new_ranges()
-{
+void quote_manager::merge_new_ranges() {
     if (new_dates.empty())
         return;
 
@@ -117,12 +105,10 @@ void quote_manager::merge_new_ranges()
     int start = *it;
     int end = *it;
 
-    for (++it; it != new_dates.end(); ++it)
-    {
+    for (++it; it != new_dates.end(); ++it) {
         if (*it == end + 1)
             end = *it;
-        else
-        {
+        else {
             new_ranges.emplace_back(start, end);
             start = *it;
             end = *it;
@@ -132,17 +118,14 @@ void quote_manager::merge_new_ranges()
     new_ranges.emplace_back(start, end);
 }
 
-void quote_manager::print_new_ranges(int case_number)
-{
+void quote_manager::print_new_ranges(int case_number) {
     std::cout << "Case " << case_number << ":\n";
 
     if (new_ranges.empty())
         std::cout << "No additional quotes are required.\n";
 
-    else
-    {
-        for (const date_range &range : new_ranges)
-        {
+    else {
+        for (const date_range &range : new_ranges) {
             if (range.start == range.end)
                 std::cout << date_range::days_to_date(range.start) << '\n';
             else
@@ -151,24 +134,20 @@ void quote_manager::print_new_ranges(int case_number)
     }
 }
 
-int main(void)
-{
+int main(void) {
     int NX, NR;
     int case_number = 0;
-    while (std::cin >> NX >> NR, NX || NR)
-    {
+    while (std::cin >> NX >> NR, NX || NR) {
         quote_manager manager;
 
-        for (int i = 0; i < NX; i++)
-        {
+        for (int i = 0; i < NX; i++) {
             int start, end;
             std::cin >> start >> end;
 
             manager.add_existing_range(start, end);
         }
 
-        for (int i = 0; i < NR; i++)
-        {
+        for (int i = 0; i < NR; i++) {
             int start, end;
             std::cin >> start >> end;
 

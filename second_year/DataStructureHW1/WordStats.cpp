@@ -16,8 +16,8 @@ class TextProcessor {
             throw std::runtime_error("Error opening input file!");
         }
 
-        wordCountFile.open("DataStructureHW1/word_histogram.txt");
-        charCountFile.open("DataStructureHW1/char_statistics.txt");
+        wordCountFile.open("DataStructureHW1/hist.txt");
+        charCountFile.open("DataStructureHW1/freq.txt");
 
         if (!wordCountFile || !charCountFile) {
             throw std::runtime_error("Error opening output files!");
@@ -89,7 +89,7 @@ class TextProcessor {
 
 int main(void) {
     try {
-        TextProcessor processor("DataStructureHW1/example.txt");
+        TextProcessor processor("DataStructureHW1/input.txt");
         processor.process();
     } catch (const std::exception &e) {
         std::cerr << e.what() << std::endl;

@@ -1,16 +1,14 @@
 #include <iostream>
 
 template <class T>
-class LinkedList
-{
-private:
+class LinkedList {
+  private:
     void clear();
     void copyFrom(const LinkedList &other);
 
-public:
-    class Node
-    {
-    public:
+  public:
+    class Node {
+      public:
         Node() : next(nullptr) {}
         Node(T d) : next(nullptr), data(d) {}
         Node(Node *n) : next(n) {}
@@ -38,13 +36,11 @@ public:
     int getSize() const;
     bool searchData(T d) const;
 
-    friend ostream &operator<<(ostream &o, const LinkedList &l)
-    {
+    friend ostream &operator<<(ostream &o, const LinkedList &l) {
         Node *current = l.head;
 
         o << "{";
-        while (current)
-        {
+        while (current) {
             o << current->data;
             if (current->next)
                 o << ", ";
@@ -55,21 +51,18 @@ public:
         return o;
     }
 
-protected:
+  protected:
     Node *head;
 };
 
 template <class T>
-LinkedList<T>::~LinkedList()
-{
+LinkedList<T>::~LinkedList() {
     clear();
 }
 
 template <class T>
-void LinkedList<T>::clear()
-{
-    while (head)
-    {
+void LinkedList<T>::clear() {
+    while (head) {
         Node *temp = head;
         head = head->next;
 
@@ -78,16 +71,13 @@ void LinkedList<T>::clear()
 }
 
 template <class T>
-LinkedList<T>::LinkedList(const LinkedList &other) : head(nullptr)
-{
+LinkedList<T>::LinkedList(const LinkedList &other) : head(nullptr) {
     copyFrom(other);
 }
 
 template <class T>
-LinkedList<T> &LinkedList<T>::operator=(const LinkedList &other)
-{
-    if (this != &other)
-    {
+LinkedList<T> &LinkedList<T>::operator=(const LinkedList &other) {
+    if (this != &other) {
         clear();
         copyFrom(other);
     }
@@ -96,16 +86,13 @@ LinkedList<T> &LinkedList<T>::operator=(const LinkedList &other)
 }
 
 template <class T>
-LinkedList<T>::LinkedList(LinkedList &&other) noexcept : head(other.head)
-{
+LinkedList<T>::LinkedList(LinkedList &&other) noexcept : head(other.head) {
     other.head = nullptr;
 }
 
 template <class T>
-LinkedList<T> &LinkedList<T>::operator=(LinkedList &&other) noexcept
-{
-    if (this != &other)
-    {
+LinkedList<T> &LinkedList<T>::operator=(LinkedList &&other) noexcept {
+    if (this != &other) {
         clear();
 
         head = other.head;
@@ -117,8 +104,7 @@ LinkedList<T> &LinkedList<T>::operator=(LinkedList &&other) noexcept
 }
 
 template <class T>
-void LinkedList<T>::copyFrom(const LinkedList &other)
-{
+void LinkedList<T>::copyFrom(const LinkedList &other) {
     if (!other.head)
         return;
 
@@ -127,8 +113,7 @@ void LinkedList<T>::copyFrom(const LinkedList &other)
     Node *current = head;
     Node *otherCurrent = other.head->next;
 
-    while (otherCurrent)
-    {
+    while (otherCurrent) {
         current->next = new Node(otherCurrent->data);
 
         current = current->next;
@@ -137,8 +122,7 @@ void LinkedList<T>::copyFrom(const LinkedList &other)
 }
 
 template <class T>
-bool LinkedList<T>::addFromHead(T d)
-{
+bool LinkedList<T>::addFromHead(T d) {
     if (!head)
         head = new Node(d);
     else
@@ -148,12 +132,10 @@ bool LinkedList<T>::addFromHead(T d)
 }
 
 template <class T>
-bool LinkedList<T>::addFromTail(T d)
-{
+bool LinkedList<T>::addFromTail(T d) {
     if (!head)
         head = new Node(d);
-    else
-    {
+    else {
         Node *current = head;
 
         while (current->next)
@@ -166,8 +148,7 @@ bool LinkedList<T>::addFromTail(T d)
 }
 
 template <class T>
-bool LinkedList<T>::removeFromHead()
-{
+bool LinkedList<T>::removeFromHead() {
     if (!head)
         return false;
 
@@ -180,13 +161,11 @@ bool LinkedList<T>::removeFromHead()
 }
 
 template <class T>
-bool LinkedList<T>::removeFromTail()
-{
+bool LinkedList<T>::removeFromTail() {
     if (!head)
         return false;
 
-    if (!head->next)
-    {
+    if (!head->next) {
         delete head;
 
         head = nullptr;
@@ -207,13 +186,11 @@ bool LinkedList<T>::removeFromTail()
 }
 
 template <class T>
-int LinkedList<T>::getSize() const
-{
+int LinkedList<T>::getSize() const {
     int size = 0;
     Node *current = head;
 
-    while (current)
-    {
+    while (current) {
         size++;
         current = current->next;
     }
@@ -222,11 +199,9 @@ int LinkedList<T>::getSize() const
 }
 
 template <class T>
-bool LinkedList<T>::searchData(T d) const
-{
+bool LinkedList<T>::searchData(T d) const {
     Node *current = head;
-    while (current)
-    {
+    while (current) {
         if (current->data == d)
             return true;
 
@@ -237,13 +212,11 @@ bool LinkedList<T>::searchData(T d) const
 }
 
 template <class T>
-T LinkedList<T>::operator[](int i) const
-{
+T LinkedList<T>::operator[](int i) const {
     Node *current = head;
     int count = 0;
 
-    while (current)
-    {
+    while (current) {
         if (count == i)
             return current->data;
 
@@ -255,9 +228,8 @@ T LinkedList<T>::operator[](int i) const
 }
 
 template <class T>
-class Set : private LinkedList<T>
-{
-public:
+class Set : private LinkedList<T> {
+  public:
     Set() : LinkedList<T>() {}
 
     bool addElement(T d);
@@ -268,15 +240,13 @@ public:
 
     Set<T> *operator*(Set<T> *s);
 
-    friend ostream &operator<<(ostream &o, Set<T> *s)
-    {
+    friend ostream &operator<<(ostream &o, Set<T> *s) {
         typename LinkedList<T>::Node *current = s->head;
 
         bool first = true;
 
         o << "{";
-        while (current)
-        {
+        while (current) {
             if (!first)
                 o << ", ";
             o << current->data;
@@ -291,8 +261,7 @@ public:
 };
 
 template <class T>
-bool Set<T>::addElement(T d)
-{
+bool Set<T>::addElement(T d) {
     if (this->searchData(d))
         return false;
 
@@ -301,21 +270,18 @@ bool Set<T>::addElement(T d)
 }
 
 template <class T>
-Set<T> *Set<T>::operator+(Set<T> *s)
-{
+Set<T> *Set<T>::operator+(Set<T> *s) {
     Set<T> *result = new Set<T>();
     typename LinkedList<T>::Node *current = this->head;
 
-    while (current)
-    {
+    while (current) {
         result->addElement(current->data);
         current = current->next;
     }
 
     current = s->head;
 
-    while (current)
-    {
+    while (current) {
         result->addElement(current->data);
         current = current->next;
     }
@@ -324,13 +290,11 @@ Set<T> *Set<T>::operator+(Set<T> *s)
 }
 
 template <class T>
-Set<T> *Set<T>::operator-(Set<T> *s)
-{
+Set<T> *Set<T>::operator-(Set<T> *s) {
     Set<T> *result = new Set<T>();
     typename LinkedList<T>::Node *current = this->head;
 
-    while (current)
-    {
+    while (current) {
         if (!s->searchData(current->data))
             result->addElement(current->data);
 
@@ -341,13 +305,11 @@ Set<T> *Set<T>::operator-(Set<T> *s)
 }
 
 template <class T>
-Set<T> *Set<T>::operator*(Set<T> *s)
-{
+Set<T> *Set<T>::operator*(Set<T> *s) {
     Set<T> *result = new Set<T>();
     typename LinkedList<T>::Node *current = this->head;
 
-    while (current)
-    {
+    while (current) {
         if (s->searchData(current->data))
             result->addElement(current->data);
 

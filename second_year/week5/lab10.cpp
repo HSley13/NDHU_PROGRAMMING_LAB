@@ -4,6 +4,17 @@
 
 template <class T>
 class TreeInLinkedList {
+  private:
+    class TreeNode {
+      public:
+        TreeNode(T d, std::shared_ptr<TreeNode> p) : data(d), parent(p) {}
+
+        std::shared_ptr<TreeNode> parent;
+        T data;
+    };
+
+    std::shared_ptr<std::vector<std::shared_ptr<TreeNode>>> nodeList;
+
   public:
     TreeInLinkedList() {
         nodeList = std::make_shared<std::vector<std::shared_ptr<TreeNode>>>();
@@ -11,66 +22,51 @@ class TreeInLinkedList {
 
     void addElement(T data) {
         int k = nodeList->size();
-
         if (data == 1) {
             nodeList->clear();
             nodeList = std::make_shared<std::vector<std::shared_ptr<TreeNode>>>();
-            std::shared_ptr<TreeNode> newNode = std::make_shared<TreeNode>(data, nullptr);
-            nodeList->push_back(newNode);
+            std::shared_ptr<TreeNode> new_node = std::make_shared<TreeNode>(data, nullptr);
+            nodeList->push_back(new_node);
         } else {
             for (int j{0}; j < k; j++) {
                 if (data % (*nodeList)[j]->data == 0) {
-                    std::shared_ptr<TreeNode> newNode = std::make_shared<TreeNode>(data, (*nodeList)[j]);
-                    nodeList->push_back(newNode);
-                    break;
+                    std::shared_ptr<TreeNode> new_node = std::make_shared<TreeNode>(data, (*nodeList)[j]);
+                    nodeList->push_back(new_node);
                 }
             }
         }
     }
 
     void displayPreorder() {
-        if (!nodeList->empty()) {
-            preorderHelper((*nodeList)[0]);
-        }
+        preorderTraversal((*nodeList)[0]);
     }
 
     void displayPostorder() {
-        if (!nodeList->empty()) {
-            postorderHelper((*nodeList)[0]);
-        }
+        postorderTraversal((*nodeList)[0]);
     }
 
   private:
-    class TreeNode {
-      public:
-        TreeNode(T d, std::shared_ptr<TreeNode> p) : data(d), parent(p) {}
-        std::shared_ptr<TreeNode> parent;
-        T data;
-    };
-
-    std::shared_ptr<std::vector<std::shared_ptr<TreeNode>>> nodeList;
-
-    void preorderHelper(std::shared_ptr<TreeNode> node) {
+    void preorderTraversal(std::shared_ptr<TreeNode> node) {
         if (!node) {
             return;
         }
 
         std::cout << node->data << " ";
-        for (std::shared_ptr<TreeNode> child : *nodeList) {
-            if (child->parent == node) {
-                preorderHelper(child);
+        for (size_t i{0}; i < nodeList->size(); i++) {
+            if ((*nodeList)[i]->parent == node) {
+                preorderTraversal((*nodeList)[i]);
             }
         }
     }
 
-    void postorderHelper(std::shared_ptr<TreeNode> node) {
+    void postorderTraversal(std::shared_ptr<TreeNode> node) {
         if (!node) {
             return;
         }
 
-        for (std::shared_ptr<TreeNode> child : *nodeList) {
-            if (child->parent == node) {
-                postorderHelper(child);
+        for (size_t i{0}; i < nodeList->size(); i++) {
+            if ((*nodeList)[i]->parent == node) {
+                postorderTraversal((*nodeList)[i]);
             }
         }
         std::cout << node->data << " ";
@@ -78,7 +74,7 @@ class TreeInLinkedList {
 };
 
 int main(void) {
-    std::unique_ptr<TreeInLinkedList<int>> tree = std::make_unique<TreeInLinkedList<int>>();
+    std::shared_ptr<TreeInLinkedList<int>> tree = std::make_shared<TreeInLinkedList<int>>();
 
     int n;
     std::cin >> n;

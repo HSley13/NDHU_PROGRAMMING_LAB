@@ -59,7 +59,7 @@ class BinarySearchTree {
         int leftHeight = height(cur->left);
         int rightHeight = height(cur->right);
 
-        return 1 + (leftHeight > rightHeight ? leftHeight : rightHeight);
+        return 1 + std::max(rightHeight, leftHeight);
     }
 
   public:
