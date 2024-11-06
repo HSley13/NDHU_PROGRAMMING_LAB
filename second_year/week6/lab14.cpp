@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <vector>
 
-template <class T>
+template <typename T>
 class MinMaxHeap {
   public:
     MinMaxHeap() = default;

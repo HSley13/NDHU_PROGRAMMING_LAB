@@ -1,21 +1,24 @@
+#include <array>
 #include <iostream>
-#include <vector>
+
+static const int N = 4;
 
 class SudokuSolver {
   public:
-    SudokuSolver(const std::vector<std::vector<int>> &initialBoard) {
+    SudokuSolver(const std::array<std::array<int, N>, N> &initialBoard) {
         board = initialBoard;
     }
 
     void printBoard() const {
         for (int i{0}; i < N; i++) {
             for (int j{0}; j < N; j++) {
-                std::cout << board[i][j] << " ";
+                std::cout << board[i][j];
+                if (j < N - 1) {
+                    std::cout << " ";
+                }
             }
             std::cout << std::endl;
         }
-        // Line to remove before submitting cause a new line isn't required after each print
-        std::cout << std::endl;
     }
 
     bool isValid(int row, int col, int num) const {
@@ -68,7 +71,6 @@ class SudokuSolver {
         for (int num{1}; num <= N; num++) {
             if (isValid(row, col, num)) {
                 board[row][col] = num;
-
                 printBoard();
 
                 if (solve()) {
@@ -82,23 +84,20 @@ class SudokuSolver {
     }
 
   private:
-    static const int N = 4;
-    std::vector<std::vector<int>> board;
+    std::array<std::array<int, N>, N> board;
 };
 
 int main(void) {
-    std::vector<std::vector<int>> initialBoard = {{1, 2, 0, 0},
-                                                  {3, 4, 0, 0},
-                                                  {2, 1, 4, 3},
-                                                  {4, 3, 2, 1}};
+    std::array<std::array<int, N>, N> initialBoard;
+    for (int i{0}; i < N; i++) {
+        for (int j{0}; j < N; j++) {
+            std::cin >> initialBoard[i][j];
+        }
+    }
 
     SudokuSolver solver(initialBoard);
 
-    std::cout << "Initial Board:" << std::endl;
-    solver.printBoard();
-
     if (solver.solve()) {
-        std::cout << "Solved Board:" << std::endl;
         solver.printBoard();
     } else {
         std::cout << "No solution exists." << std::endl;
