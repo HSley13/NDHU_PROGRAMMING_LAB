@@ -150,11 +150,11 @@ class ExpressionTree {
         if (node->value == "+") return leftValue + rightValue;
         if (node->value == "-") return leftValue - rightValue;
         if (node->value == "*") return leftValue * rightValue;
+        if (node->value == "%") return leftValue % rightValue;
         if (node->value == "/") {
             if (rightValue == 0) throw std::runtime_error("Division by zero");
             return leftValue / rightValue;
         }
-        if (node->value == "%") return leftValue % rightValue;
 
         throw std::runtime_error("Invalid operator");
     }
