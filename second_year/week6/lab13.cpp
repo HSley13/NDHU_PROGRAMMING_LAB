@@ -69,27 +69,31 @@ class MaxHeap {
 };
 
 int main(void) {
-    MaxHeap<int> maxHeap;
+    try {
+        MaxHeap<int> maxHeap;
 
-    maxHeap.insert(10);
-    maxHeap.insert(20);
-    maxHeap.insert(5);
-    maxHeap.insert(30);
-    maxHeap.insert(15);
+        maxHeap.insert(10);
+        maxHeap.insert(20);
+        maxHeap.insert(5);
+        maxHeap.insert(30);
+        maxHeap.insert(15);
 
-    // MaxHeap<std::string> maxHeap;
-    //
-    //   // Insert values into the heap.
-    //   maxHeap.insert("banana");
-    //   maxHeap.insert("apple");
-    //   maxHeap.insert("grape");
-    //   maxHeap.insert("orange");
-    //   maxHeap.insert("kiwi");
+        // MaxHeap<std::string> maxHeap;
+        //
+        //   // Insert values into the heap.
+        //   maxHeap.insert("banana");
+        //   maxHeap.insert("apple");
+        //   maxHeap.insert("grape");
+        //   maxHeap.insert("orange");
+        //   maxHeap.insert("kiwi");
 
-    std::cout << "MaxHeap elements extracted in order:\n";
+        std::cout << "MaxHeap elements extracted in order:\n";
 
-    while (maxHeap.count() > 0) {
-        std::cout << maxHeap.extract() << " ";
+        while (maxHeap.count() > 0) {
+            std::cout << maxHeap.extract() << " ";
+        }
+        std::cout << std::endl;
+    } catch (const std::exception &e) {
+        std::cout << e.what() << std::endl;
     }
-    std::cout << std::endl;
 }

@@ -23,6 +23,7 @@ class MinMaxHeap {
         if (heap.empty()) {
             throw std::out_of_range("Heap is empty");
         }
+
         if (heap.size() == 1) {
             return heap[0];
         } else if (heap.size() == 2) {
@@ -39,6 +40,7 @@ class MinMaxHeap {
 
         heap[0] = heap.back();
         heap.pop_back();
+
         trickleDown(0);
     }
 
@@ -53,6 +55,7 @@ class MinMaxHeap {
             int maxIndex = (heap.size() > 2 && heap[2] > heap[1]) ? 2 : 1;
             heap[maxIndex] = heap.back();
             heap.pop_back();
+
             trickleDown(maxIndex);
         }
     }
@@ -93,7 +96,9 @@ class MinMaxHeap {
     }
 
     void bubbleUpHelper(int index, bool isMin) {
-        if (index < 3) return;
+        if (index < 3) {
+            return;
+        }
 
         int grandparentIndex = (index - 3) / 4;
         if ((isMin && heap[index] < heap[grandparentIndex]) || (!isMin && heap[index] > heap[grandparentIndex])) {
@@ -105,7 +110,6 @@ class MinMaxHeap {
     void trickleDown(int index) {
         bool isMin = isMinLevel(index);
         int extremumIndex = getExtremumChildOrGrandchild(index, isMin);
-
         if (extremumIndex != -1) {
             if (extremumIndex > index * 2 + 1 && ((isMin && heap[extremumIndex] < heap[index]) || (!isMin && heap[extremumIndex] > heap[index]))) {
                 std::swap(heap[index], heap[extremumIndex]);
@@ -161,6 +165,7 @@ int main(void) {
             break;
         }
     }
+
     std::cout << std::endl;
 
     for (int j{0}; j < 10; j++) {

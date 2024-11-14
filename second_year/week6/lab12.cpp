@@ -161,17 +161,21 @@ class ExpressionTree {
 };
 
 int main(void) {
-    std::string infix = "( -12 + 3 ) * 4 % 5";
-    ExpressionTree exprTree(infix);
+    try {
+        std::string infix = "( -12 + 3 ) * 4 % 5";
+        ExpressionTree exprTree(infix);
 
-    std::cout << "Inorder: ";
-    exprTree.printInFixOrder();
+        std::cout << "Inorder: ";
+        exprTree.printInFixOrder();
 
-    std::cout << "Preorder: ";
-    exprTree.printPreFixOrder();
+        std::cout << "Preorder: ";
+        exprTree.printPreFixOrder();
 
-    std::cout << "Postorder: ";
-    exprTree.printPostFixOrder();
+        std::cout << "Postorder: ";
+        exprTree.printPostFixOrder();
 
-    std::cout << "Evaluated result: " << exprTree.eval() << std::endl;
+        std::cout << "Evaluated result: " << exprTree.eval() << std::endl;
+    } catch (const std::exception &e) {
+        std::cout << e.what() << std::endl;
+    }
 }
