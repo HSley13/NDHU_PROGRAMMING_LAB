@@ -1,60 +1,74 @@
 #include <iostream>
+#include <map>
 #include <memory>
 #include <string>
-#include <unordered_map>
 
 class TrieNode {
   public:
-    std::unordered_map<char, std::unique_ptr<TrieNode>> children;
+    std::map<char, std::shared_ptr<TrieNode>> children;
     bool is_end_of_word = false;
 };
 
 class Trie {
-  private:
-    std::unique_ptr<TrieNode> root;
-
-    void preorderHelper(TrieNode *node, const std::string &prefix, int level) {
-        if (!node) {
-            return;
-        }
-
-        if (node->is_end_of_word) {
-            std::cout << std::string(level * 2, ' ') << prefix << std::endl;
-        }
-
-        for (const auto &pair : node->children) {
-            preorderHelper(pair.second.get(), prefix + pair.first, level + 1);
-        }
-    }
-
   public:
-    Trie() : root(std::make_unique<TrieNode>()) {}
+    Trie() : root(std::make_shared<TrieNode>()) {}
 
     void insert(const std::string &value) {
-        TrieNode *current = root.get();
+        std::shared_ptr<TrieNode> current = root;
         for (const char &ch : value) {
             if (current->children.find(ch) == current->children.end()) {
-                current->children[ch] = std::make_unique<TrieNode>();
+                current->children[ch] = std::make_shared<TrieNode>();
             }
-            current = current->children.at(ch).get();
+            current = current->children[ch];
         }
         current->is_end_of_word = true;
     }
 
     bool search(const std::string &key) {
-        TrieNode *current = root.get();
+        std::shared_ptr<TrieNode> current = root;
         for (const char &ch : key) {
             if (current->children.find(ch) == current->children.end()) {
                 return false;
             }
-            current = current->children.at(ch).get();
+            current = current->children[ch];
         }
         return current->is_end_of_word;
     }
 
     void preorder() {
-        preorderHelper(root.get(), "", 0);
-        std::cout << "[]" << std::endl;
+        preorderHelper(root, nullptr, 0);
+    }
+
+  private:
+    std::shared_ptr<TrieNode> root;
+
+    void preorderHelper(const std::shared_ptr<TrieNode> &node, const std::shared_ptr<TrieNode> &parent, int level) {
+        if (!node) {
+            return;
+        }
+
+        if (parent && (parent->children.size() > 1 || parent->is_end_of_word)) {
+            for (int i{0}; i < level; i++) {
+                std::cout << " ";
+            }
+        }
+
+        if (node == root) {
+            std::cout << "[]";
+        } else {
+            auto it = std::find_if(parent->children.begin(), parent->children.end(), [&](const auto &pair) { return pair.second == node; });
+            if (it != parent->children.end()) {
+                std::cout << it->first;
+            }
+        }
+
+        if (node->children.size() > 1 || node->is_end_of_word) {
+            std::cout << std::endl;
+        }
+
+        for (const auto &pair : node->children) {
+            preorderHelper(pair.second, node, level + 2);
+        }
     }
 };
 

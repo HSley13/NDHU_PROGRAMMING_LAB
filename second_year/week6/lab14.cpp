@@ -64,7 +64,7 @@ class MinMaxHeap {
     std::vector<T> heap;
 
     bool isMinLevel(int index) const {
-        int level = 0;
+        int level{0};
         while (index > 0) {
             index = (index - 1) / 2;
             level++;
@@ -73,7 +73,7 @@ class MinMaxHeap {
     }
 
     void bubbleUp(int index) {
-        if (index == 0) {
+        if (!index) {
             return;
         }
 

@@ -3,11 +3,12 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 
 class SuffixTreeNode {
   public:
-    std::unordered_map<char, std::unique_ptr<SuffixTreeNode>> children;
+    std::unordered_map<char, std::shared_ptr<SuffixTreeNode>> children;
     std::vector<int> suffix_indices;
 
     SuffixTreeNode() = default;
@@ -17,7 +18,7 @@ class SuffixTreeNode {
         for (std::size_t i{index}; i < text.size(); i++) {
             char ch = text[i];
             if (current->children.find(ch) == current->children.end()) {
-                current->children[ch] = std::make_unique<SuffixTreeNode>();
+                current->children[ch] = std::make_shared<SuffixTreeNode>();
             }
             current = current->children.at(ch).get();
             current->suffix_indices.push_back(index);
@@ -27,36 +28,25 @@ class SuffixTreeNode {
 
 class SuffixTree {
   public:
-    SuffixTree(const std::string &text) : text(text), root(std::make_unique<SuffixTreeNode>()) {
+    SuffixTree(const std::string &text) : text(text), root(std::make_shared<SuffixTreeNode>()) {
         for (std::size_t i{0}; i < text.size(); i++) {
             root->insertSuffix(text, i);
         }
     }
 
-    bool exist(const std::string &substring) const {
-        const SuffixTreeNode *current = root.get();
+    std::pair<bool, int> existAndCount(const std::string &substring) const {
+        std::shared_ptr<const SuffixTreeNode> current = root;
         for (const char &ch : substring) {
             if (current->children.find(ch) == current->children.end()) {
-                return false;
+                return {false, 0};
             }
-            current = current->children.at(ch).get();
+            current = current->children.at(ch);
         }
-        return true;
-    }
-
-    int count(const std::string &substring) const {
-        const SuffixTreeNode *current = root.get();
-        for (const char &ch : substring) {
-            if (current->children.find(ch) == current->children.end()) {
-                return 0;
-            }
-            current = current->children.at(ch).get();
-        }
-        return current->suffix_indices.size();
+        return {true, current->suffix_indices.size()};
     }
 
   private:
-    std::unique_ptr<SuffixTreeNode> root;
+    std::shared_ptr<SuffixTreeNode> root;
     std::string text;
 };
 
@@ -81,7 +71,10 @@ int main(void) {
         if (query.empty()) {
             break;
         }
-        std::cout << "Existence of '" << query << "': " << (tree.exist(query) ? "Yes" : "No") << std::endl;
-        std::cout << "Count of '" << query << "': " << tree.count(query) << std::endl;
+
+        std::pair<bool, int> result = tree.existAndCount(query);
+
+        std::cout << "Existence of '" << query << "': " << (result.first ? "Yes" : "No") << std::endl;
+        std::cout << "Count of '" << query << "': " << result.second << std::endl;
     }
 }

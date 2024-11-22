@@ -7,8 +7,8 @@ template <class T>
 class BinaryTreeNode {
   public:
     T data;
-    std::unique_ptr<BinaryTreeNode<T>> left;
-    std::unique_ptr<BinaryTreeNode<T>> right;
+    std::shared_ptr<BinaryTreeNode<T>> left;
+    std::shared_ptr<BinaryTreeNode<T>> right;
     int height;
 
     BinaryTreeNode(T d) : data(d), left(nullptr), right(nullptr), height(1) {}
@@ -28,122 +28,105 @@ class AVLTree {
     AVLTree() : root(nullptr) {}
 
     void insert(T data) {
-        root = insert(std::move(root), data);
+        root = insert(root, data);
     }
 
     void inorder() {
-        inorder(root.get(), 0);
+        inorder(root, 0);
     }
 
   private:
-    std::unique_ptr<BinaryTreeNode<T>> root;
+    std::shared_ptr<BinaryTreeNode<T>> root;
 
-    int height(BinaryTreeNode<T> *node) {
+    int height(std::shared_ptr<BinaryTreeNode<T>> node) {
         if (!node) {
             return 0;
         }
         return node->height;
     }
 
-    int getBalance(BinaryTreeNode<T> *node) {
+    int getBalance(std::shared_ptr<BinaryTreeNode<T>> node) {
         if (!node) {
             return 0;
         }
-        return height(node->left.get()) - height(node->right.get());
+        return height(node->left) - height(node->right);
     }
 
-    // Right rotation
-    std::unique_ptr<BinaryTreeNode<T>> rightRotate(std::unique_ptr<BinaryTreeNode<T>> &y) {
-        std::unique_ptr<BinaryTreeNode<T>> x = std::move(y->left);
-        std::unique_ptr<BinaryTreeNode<T>> T2 = std::move(x->right);
+    std::shared_ptr<BinaryTreeNode<T>> rightRotate(std::shared_ptr<BinaryTreeNode<T>> y) {
+        std::shared_ptr<BinaryTreeNode<T>> x = y->left;
+        std::shared_ptr<BinaryTreeNode<T>> T2 = x->right;
 
-        // Perform rotation
-        x->right = std::move(y);
-        x->right->left = std::move(T2);
+        x->right = y;
+        y->left = T2;
 
-        // Update heights
-        x->right->height = std::max(height(x->right->left.get()), height(x->right->right.get())) + 1;
-        x->height = std::max(height(x->left.get()), height(x->right.get())) + 1;
+        y->height = std::max(height(y->left), height(y->right)) + 1;
+        x->height = std::max(height(x->left), height(x->right)) + 1;
 
-        return x; // Return new root
+        return x;
     }
 
-    // Left rotation
-    std::unique_ptr<BinaryTreeNode<T>> leftRotate(std::unique_ptr<BinaryTreeNode<T>> &x) {
-        std::unique_ptr<BinaryTreeNode<T>> y = std::move(x->right);
-        std::unique_ptr<BinaryTreeNode<T>> T2 = std::move(y->left);
+    std::shared_ptr<BinaryTreeNode<T>> leftRotate(std::shared_ptr<BinaryTreeNode<T>> x) {
+        std::shared_ptr<BinaryTreeNode<T>> y = x->right;
+        std::shared_ptr<BinaryTreeNode<T>> T2 = y->left;
 
-        // Perform rotation
-        y->left = std::move(x);
-        y->left->right = std::move(T2);
+        y->left = x;
+        x->right = T2;
 
-        // Update heights
-        y->left->height = std::max(height(y->left->left.get()), height(y->left->right.get())) + 1;
-        y->height = std::max(height(y->left.get()), height(y->right.get())) + 1;
+        x->height = std::max(height(x->left), height(x->right)) + 1;
+        y->height = std::max(height(y->left), height(y->right)) + 1;
 
-        return y; // Return new root
+        return y;
     }
 
-    // Function to insert a new node
-    std::unique_ptr<BinaryTreeNode<T>> insert(std::unique_ptr<BinaryTreeNode<T>> node, T data) {
-        // 1. Perform the normal BST insert
+    std::shared_ptr<BinaryTreeNode<T>> insert(std::shared_ptr<BinaryTreeNode<T>> node, T data) {
         if (!node) {
-            return std::make_unique<BinaryTreeNode<T>>(data);
+            return std::make_shared<BinaryTreeNode<T>>(data);
         }
 
         if (data < node->data) {
-            node->left = insert(std::move(node->left), data);
+            node->left = insert(node->left, data);
         } else if (data > node->data) {
-            node->right = insert(std::move(node->right), data);
+            node->right = insert(node->right, data);
         } else {
-            return node; // Duplicates are not allowed
+            return node;
         }
 
-        // 2. Update height of this ancestor node
-        node->height = 1 + std::max(height(node->left.get()), height(node->right.get()));
+        node->height = 1 + std::max(height(node->left), height(node->right));
 
-        // 3. Get the balance factor of this ancestor node to check whether it became unbalanced
-        int balance = getBalance(node.get());
+        int balance = getBalance(node);
 
-        // If this node becomes unbalanced, then there are 4 cases
-
-        // Left Left Case
         if (balance > 1 && data < node->left->data) {
             return rightRotate(node);
         }
 
-        // Right Right Case
-        if (balance < -1 && data > node->right->data) {
-            return leftRotate(node);
-        }
-
-        // Left Right Case
         if (balance > 1 && data > node->left->data) {
             node->left = leftRotate(node->left);
             return rightRotate(node);
         }
 
-        // Right Left Case
+        if (balance < -1 && data > node->right->data) {
+            return leftRotate(node);
+        }
+
         if (balance < -1 && data < node->right->data) {
             node->right = rightRotate(node->right);
             return leftRotate(node);
         }
 
-        return node; // Return the (unchanged) node pointer
+        return node;
     }
 
-    // Function to print the inorder traversal of the tree
-    void inorder(BinaryTreeNode<T> *node, int n) {
+    void inorder(std::shared_ptr<BinaryTreeNode<T>> node, int n) {
         if (!node) {
             return;
         }
 
-        inorder(node->right.get(), n + 1);
+        inorder(node->right, n + 1);
         for (int j{0}; j < n; j++) {
             std::cout << "  ";
         }
         std::cout << node->data << std::endl;
-        inorder(node->left.get(), n + 1);
+        inorder(node->left, n + 1);
     }
 };
 

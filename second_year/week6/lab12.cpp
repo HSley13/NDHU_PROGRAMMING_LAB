@@ -179,3 +179,12 @@ int main(void) {
         std::cout << e.what() << std::endl;
     }
 }
+/*
+        %
+       / \
+      *   5
+     / \
+    +   4
+   / \
+-12   3
+*/
