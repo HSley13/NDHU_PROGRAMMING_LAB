@@ -47,7 +47,7 @@ class ExpressionTree {
     }
 
     std::shared_ptr<Node> buildTree(const std::string &expression) {
-        std::string postfix = infixToPostfix(expression);
+        std::string postfix{infixToPostfix(expression)};
 
         std::stack<std::shared_ptr<Node>> st;
         std::istringstream iss(postfix);
@@ -144,8 +144,8 @@ class ExpressionTree {
 
         if (!isOperator(node->value)) return std::stoi(node->value);
 
-        int leftValue = evaluate(node->left);
-        int rightValue = evaluate(node->right);
+        int leftValue{evaluate(node->left)};
+        int rightValue{evaluate(node->right)};
 
         if (node->value == "+") return leftValue + rightValue;
         if (node->value == "-") return leftValue - rightValue;
@@ -162,7 +162,7 @@ class ExpressionTree {
 
 int main(void) {
     try {
-        std::string infix = "( -12 + 3 ) * 4 % 5";
+        std::string infix{"( -12 + 3 ) * 4 % 5"};
         ExpressionTree exprTree(infix);
 
         std::cout << "Inorder: ";

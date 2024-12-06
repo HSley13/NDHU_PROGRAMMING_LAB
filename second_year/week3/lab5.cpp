@@ -1,55 +1,71 @@
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
-
-#define SIZE 100
+#include <memory>
 
 class Node {
   public:
-    Node() {
-        next = NULL;
-        pre = NULL;
+    Node()
+        : data{0}, next{nullptr}, pre{nullptr} {}
+
+    Node(int n)
+        : data{n}, next{nullptr}, pre{nullptr} {}
+
+    int getData() {
+        return data;
     }
 
-    Node(int n) {
-        data = n;
-        next = NULL;
-        pre = NULL;
+    std::shared_ptr<Node> getNext() {
+        return next;
     }
 
-    int getData() { return data; }
+    std::shared_ptr<Node> getPre() {
+        return pre;
+    }
 
-    Node *getNext() { return next; }
-    Node *getPre() { return pre; }
+    void setData(int d) {
+        data = d;
+    }
 
-    void setData(int d) { data = d; }
-    void setNext(Node *n) { next = n; }
-    void setPre(Node *p) { pre = p; }
+    void setNext(std::shared_ptr<Node> n) {
+        next = n;
+    }
+
+    void setPre(std::shared_ptr<Node> p) {
+        pre = p;
+    }
 
   private:
     int data;
-    Node *next, *pre;
+    std::shared_ptr<Node> next;
+    std::shared_ptr<Node> pre;
 };
 
 class List {
   public:
-    List() { list = NULL; }
-    List(int n) { generate(n); }
+    List()
+        : list{nullptr} {}
+
+    List(int n) {
+        generate(n);
+    }
 
     void generate(int n) {
-        list = NULL;
+        list = nullptr;
 
-        for (int j{0}; j < n; j++)
+        for (int j{0}; j < n; j++) {
             generate();
+        }
     }
 
     void generate() {
-        Node *buf = new Node(rand() % 10);
+        std::shared_ptr<Node> buf{std::make_shared<Node>(rand() % 10)};
 
         buf->setNext(list);
 
-        if (list != NULL)
+        if (list != nullptr) {
             list->setPre(buf);
+        }
 
         list = buf;
     }
@@ -61,11 +77,11 @@ class List {
 
         bool swap{true};
         while (swap) {
-            Node *current{list};
+            std::shared_ptr<Node> current{list};
             swap = false;
             while (current->getNext() != nullptr) {
                 if (current->getData() > current->getNext()->getData()) {
-                    int temp = current->getData();
+                    int temp{current->getData()};
                     current->setData(current->getNext()->getData());
                     current->getNext()->setData(temp);
                     swap = true;
@@ -80,21 +96,22 @@ class List {
             return;
         }
 
-        Node *current{list};
+        std::shared_ptr<Node> current{list};
 
         while (current != nullptr) {
-            Node *min{current};
-            Node *next{current->getNext()};
+            std::shared_ptr<Node> min{current};
+            std::shared_ptr<Node> next{current->getNext()};
 
             while (next != nullptr) {
-                if (min->getData() > next->getData())
+                if (min->getData() > next->getData()) {
                     min = next;
+                }
 
                 next = next->getNext();
             }
 
             if (min != current) {
-                int temp = current->getData();
+                int temp{current->getData()};
                 current->setData(min->getData());
                 min->setData(temp);
             }
@@ -107,47 +124,46 @@ class List {
             return;
         }
 
-        Node *sorted = new Node(0);
-        Node *current = list;
+        std::shared_ptr<Node> sorted{std::make_shared<Node>(0)};
+        std::shared_ptr<Node> current{list};
 
         while (current != nullptr) {
-            Node *next = current->getNext();
+            std::shared_ptr<Node> next{current->getNext()};
 
-            Node *temp = sorted;
+            std::shared_ptr<Node> temp{sorted};
             while (temp->getNext() != nullptr && temp->getNext()->getData() < current->getData()) {
                 temp = temp->getNext();
             }
 
-            if (temp != current) {
-                int temp2 = current->getData();
-                current->setData(temp->getData());
-                temp->setData(temp2);
+            if (current->getPre()) {
+                current->getPre()->setNext(current->getNext());
             }
 
-            if (current->getPre())
-                current->getPre()->setNext(current->getNext());
-            if (current->getNext())
+            if (current->getNext()) {
                 current->getNext()->setPre(current->getPre());
+            }
 
             current->setPre(temp);
-            if (temp->getNext())
+            if (temp->getNext()) {
                 temp->getNext()->setPre(current);
+            }
+            current->setNext(temp->getNext());
             temp->setNext(current);
 
             current = next;
         }
 
         list = sorted->getNext();
-        list->setPre(nullptr);
-        delete sorted;
+        if (list != nullptr) {
+            list->setPre(nullptr);
+        }
     }
 
     void print() {
-        Node *cur = list;
+        std::shared_ptr<Node> cur{list};
 
-        while (cur != NULL) {
+        while (cur != nullptr) {
             std::cout << cur->getData() << " ";
-
             cur = cur->getNext();
         }
 
@@ -155,26 +171,26 @@ class List {
     }
 
   private:
-    Node *list;
+    std::shared_ptr<Node> list;
 };
 
 int main(void) {
-    srand(time(NULL));
+    srand(time(nullptr));
 
-    List *l = new List(10);
+    std::shared_ptr<List> l{std::make_shared<List>(10)};
 
     l->print();
     l->bubbleSort();
     l->print();
     std::cout << std::endl;
 
-    l = new List(10);
+    l = std::make_shared<List>(10);
     l->print();
     l->insertionSort();
     l->print();
     std::cout << std::endl;
 
-    l = new List(10);
+    l = std::make_shared<List>(10);
     l->print();
     l->selectionSort();
     l->print();

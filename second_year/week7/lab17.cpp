@@ -142,15 +142,18 @@ int main(void) {
     tree.insert(5);
     tree.insert(6);
 
-    std::cout << "\nInorder Traversal of the AVL Tree after insertions:" << std::endl;
+    std::cout << std::endl
+              << "Inorder Traversal of the AVL Tree after insertions:" << std::endl;
     tree.inorder();
 
-    std::cout << "\nInserting elements: 35, 50, 40, 45" << std::endl;
+    std::cout << std::endl
+              << "Inserting elements: 35, 50, 40, 45" << std::endl;
     tree.insert(35);
     tree.insert(50);
     tree.insert(40);
     tree.insert(45);
 
-    std::cout << "\nInorder Traversal of the AVL Tree after more insertions:" << std::endl;
+    std::cout << std::endl
+              << "Inorder Traversal of the AVL Tree after more insertions:" << std::endl;
     tree.inorder();
 }

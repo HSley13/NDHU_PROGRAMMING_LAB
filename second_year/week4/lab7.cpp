@@ -88,7 +88,7 @@ class Maze {
 
     std::unique_ptr<List> getPath() {
         std::unique_ptr<List> path = std::make_unique<List>();
-        std::unique_ptr<std::unique_ptr<bool[]>[]> visited = std::make_unique<std::unique_ptr<bool[]>[]>(SIZE);
+        std::unique_ptr<std::unique_ptr<bool[]>[]> visited{std::make_unique<std::unique_ptr<bool[]>[]>(SIZE)};
 
         for (int i{0}; i < SIZE; i++) {
             visited[i] = std::make_unique<bool[]>(SIZE);

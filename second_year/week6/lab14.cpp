@@ -77,7 +77,7 @@ class MinMaxHeap {
             return;
         }
 
-        int parentIndex = (index - 1) / 2;
+        int parentIndex{(index - 1) / 2};
         if (isMinLevel(index)) {
             if (heap[index] > heap[parentIndex]) {
                 std::swap(heap[index], heap[parentIndex]);
@@ -100,7 +100,7 @@ class MinMaxHeap {
             return;
         }
 
-        int grandparentIndex = (index - 3) / 4;
+        int grandparentIndex{(index - 3) / 4};
         if ((isMin && heap[index] < heap[grandparentIndex]) || (!isMin && heap[index] > heap[grandparentIndex])) {
             std::swap(heap[index], heap[grandparentIndex]);
             bubbleUpHelper(grandparentIndex, isMin);
@@ -108,13 +108,13 @@ class MinMaxHeap {
     }
 
     void trickleDown(int index) {
-        bool isMin = isMinLevel(index);
-        int extremumIndex = getExtremumChildOrGrandchild(index, isMin);
+        bool isMin{isMinLevel(index)};
+        int extremumIndex{getExtremumChildOrGrandchild(index, isMin)};
         if (extremumIndex != -1) {
             if (extremumIndex > index * 2 + 1 && ((isMin && heap[extremumIndex] < heap[index]) || (!isMin && heap[extremumIndex] > heap[index]))) {
                 std::swap(heap[index], heap[extremumIndex]);
 
-                int parentIndex = (extremumIndex - 1) / 2;
+                int parentIndex{(extremumIndex - 1) / 2};
                 if ((isMin && heap[extremumIndex] > heap[parentIndex]) || (!isMin && heap[extremumIndex] < heap[parentIndex])) {
                     std::swap(heap[extremumIndex], heap[parentIndex]);
                 }
@@ -127,9 +127,9 @@ class MinMaxHeap {
     }
 
     int getExtremumChildOrGrandchild(int index, bool findMin) const {
-        int leftChild = 2 * index + 1;
-        int rightChild = 2 * index + 2;
-        int extremumIndex = -1;
+        int leftChild{2 * index + 1};
+        int rightChild{2 * index + 2};
+        int extremumIndex{-1};
 
         if (leftChild < heap.size()) {
             extremumIndex = leftChild;

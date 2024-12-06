@@ -10,7 +10,7 @@ class BinaryTreeInArray {
     BinaryTreeInArray() : height(0), numOfElement(0) {}
 
     void addElementAsCompleteTree(T data) {
-        int cap = pow(2, height) - 1;
+        int cap{(int)pow(2, height) - 1};
 
         if (numOfElement + 1 > cap) {
             resize((cap + 1) * 2 - 1);

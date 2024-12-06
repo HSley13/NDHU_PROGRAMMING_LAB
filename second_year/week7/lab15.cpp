@@ -11,10 +11,8 @@ class SuffixTreeNode {
     std::unordered_map<char, std::shared_ptr<SuffixTreeNode>> children;
     std::vector<int> suffix_indices;
 
-    SuffixTreeNode() = default;
-
     void insertSuffix(const std::string &text, std::size_t index) {
-        SuffixTreeNode *current = this;
+        SuffixTreeNode *current{this};
         for (std::size_t i{index}; i < text.size(); i++) {
             char ch = text[i];
             if (current->children.find(ch) == current->children.end()) {
@@ -35,7 +33,7 @@ class SuffixTree {
     }
 
     std::pair<bool, int> existAndCount(const std::string &substring) const {
-        std::shared_ptr<const SuffixTreeNode> current = root;
+        std::shared_ptr<const SuffixTreeNode> current{root};
         for (const char &ch : substring) {
             if (current->children.find(ch) == current->children.end()) {
                 return {false, 0};

@@ -5,27 +5,27 @@
 
 class Stack {
   public:
-    Stack() {
-        top = 0;
-    }
+    Stack()
+        : top{0} {}
 
-    int push(int data) {
-        if (top == SIZE)
-            return -1;
+    bool push(int value) {
+        if (top == SIZE) {
+            return false;
+        }
 
-        this->data[top] = data;
+        data[top] = value;
         top++;
-
-        return 1;
+        return true;
     }
 
-    int *pop() {
-        if (top == 0)
-            return nullptr;
+    bool pop(int &value) {
+        if (top == 0) {
+            return false;
+        }
 
-        int *temp = &data[top - 1];
         top--;
-        return temp;
+        value = data[top];
+        return true;
     }
 
   private:
@@ -34,25 +34,33 @@ class Stack {
 };
 
 int main(void) {
-    int data, *temp;
-    char command[50];
+    int data{0};
+    char command[50]{};
+    Stack stack{};
 
-    Stack *stack = new Stack();
-
-    while (1) {
+    while (true) {
+        std::cout << "Enter command (push, pop, exit): ";
         std::cin >> command;
 
-        if (strcmp(command, "exit") == 0)
+        if (std::strcmp(command, "exit") == 0) {
             break;
-        else if (strcmp(command, "push") == 0) {
-            std::cout << "Please input a integer data:";
+        } else if (std::strcmp(command, "push") == 0) {
+            std::cout << "Please input an integer: ";
             std::cin >> data;
 
-            (stack->push(data) == 1) ? std::cout << "Successfully push data " << data << " into stack." << std::endl : std::cout << "Failed to push data into stack." << std::endl;
-        } else if (strcmp(command, "pop") == 0) {
-            temp = stack->pop();
-            (temp == NULL) ? std::cout << "Failed to pop a data from stack." << std::endl : std::cout << "Pop data " << *temp << " from stack.\n"
-                                                                                                      << std::endl;
+            if (stack.push(data)) {
+                std::cout << "Successfully pushed " << data << " into the stack." << std::endl;
+            } else {
+                std::cout << "Stack is full. Failed to push data." << std::endl;
+            }
+        } else if (std::strcmp(command, "pop") == 0) {
+            if (stack.pop(data)) {
+                std::cout << "Popped " << data << " from the stack." << std::endl;
+            } else {
+                std::cout << "Stack is empty. Failed to pop data." << std::endl;
+            }
+        } else {
+            std::cout << "Invalid command. Try again." << std::endl;
         }
     }
 }

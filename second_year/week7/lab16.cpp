@@ -6,7 +6,7 @@
 class TrieNode {
   public:
     std::map<char, std::shared_ptr<TrieNode>> children;
-    bool is_end_of_word = false;
+    bool is_end_of_word{false};
 };
 
 class Trie {
@@ -14,7 +14,7 @@ class Trie {
     Trie() : root(std::make_shared<TrieNode>()) {}
 
     void insert(const std::string &value) {
-        std::shared_ptr<TrieNode> current = root;
+        std::shared_ptr<TrieNode> current{root};
         for (const char &ch : value) {
             if (current->children.find(ch) == current->children.end()) {
                 current->children[ch] = std::make_shared<TrieNode>();
@@ -25,7 +25,7 @@ class Trie {
     }
 
     bool search(const std::string &key) {
-        std::shared_ptr<TrieNode> current = root;
+        std::shared_ptr<TrieNode> current{root};
         for (const char &ch : key) {
             if (current->children.find(ch) == current->children.end()) {
                 return false;
@@ -54,9 +54,9 @@ class Trie {
         }
 
         if (node == root) {
-            std::cout << "[]";
+            std::cout << "[]" << std::endl;
         } else {
-            auto it = std::find_if(parent->children.begin(), parent->children.end(), [&](const auto &pair) { return pair.second == node; });
+            auto it = std::find_if(parent->children.begin(), parent->children.end(), [&](const std::pair<char, std::shared_ptr<TrieNode>> &child) { return child.second == node; });
             if (it != parent->children.end()) {
                 std::cout << it->first;
             }
@@ -66,7 +66,7 @@ class Trie {
             std::cout << std::endl;
         }
 
-        for (const auto &pair : node->children) {
+        for (const std::pair<char, std::shared_ptr<TrieNode>> &pair : node->children) {
             preorderHelper(pair.second, node, level + 2);
         }
     }

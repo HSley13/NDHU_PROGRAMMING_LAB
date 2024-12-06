@@ -17,7 +17,7 @@ class MaxHeap {
             throw std::runtime_error("Heap is empty");
         }
 
-        T root_value = heap[0];
+        T root_value{heap[0]};
         heap[0] = heap.back();
         heap.pop_back();
         siftDown(0);
@@ -34,7 +34,7 @@ class MaxHeap {
 
     void siftUp(int index) {
         while (index > 0) {
-            int parentIndex = (index - 1) / 2;
+            int parentIndex{(index - 1) / 2};
             if (heap[index] <= heap[parentIndex]) {
                 break;
             }

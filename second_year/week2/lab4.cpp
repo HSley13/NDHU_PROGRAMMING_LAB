@@ -5,58 +5,66 @@
 
 class Queue {
   public:
-    Queue() {
-        top = 0;
-        bot = -1;
-        count = 0;
-    }
+    Queue()
+        : top{0}, bot{-1}, count{0} {}
 
-    int enqueue(int data) {
-        if (count == SIZE)
-            return -1;
+    bool enqueue(int value) {
+        if (count == SIZE) {
+            return false;
+        }
 
-        this->data[top] = data;
+        data[top] = value;
         top = (top + 1) % SIZE;
-
         count++;
-
-        return 1;
+        return true;
     }
 
-    int *dequeue() {
-        if (count == 0)
-            return nullptr;
+    bool dequeue(int &value) {
+        if (count == 0) {
+            return false;
+        }
 
         bot = (bot + 1) % SIZE;
+        value = data[bot];
         count--;
-
-        return &data[bot];
+        return true;
     }
 
   private:
     int data[SIZE];
-    int top, bot, count;
+    int top;
+    int bot;
+    int count;
 };
 
 int main(void) {
-    int data, *temp;
-    char command[50];
+    int data{0};
+    char command[50]{};
+    Queue queue{};
 
-    Queue *queue = new Queue();
-
-    while (1) {
+    while (true) {
+        std::cout << "Enter command (enqueue, dequeue, exit): ";
         std::cin >> command;
 
-        if (strcmp(command, "exit") == 0)
+        if (std::strcmp(command, "exit") == 0) {
             break;
-        else if (strcmp(command, "enqueue") == 0) {
-            std::cout << "Please input a integer data:";
+        } else if (std::strcmp(command, "enqueue") == 0) {
+            std::cout << "Please input an integer: ";
             std::cin >> data;
 
-            (queue->enqueue(data) == 1) ? std::cout << "Successfully enqueue data " << data << " into queue." << std::endl : std::cout << "Failed to enqueue data into queue." << std::endl;
-        } else if (strcmp(command, "dequeue") == 0) {
-            temp = queue->dequeue();
-            (temp == NULL) ? std::cout << "Failed to dequeue a data from queue." << std::endl : std::cout << "Dequeue data " << *temp << " from queue." << std::endl;
+            if (queue.enqueue(data)) {
+                std::cout << "Successfully enqueued " << data << " into the queue." << std::endl;
+            } else {
+                std::cout << "Queue is full. Failed to enqueue data." << std::endl;
+            }
+        } else if (std::strcmp(command, "dequeue") == 0) {
+            if (queue.dequeue(data)) {
+                std::cout << "Dequeued " << data << " from the queue." << std::endl;
+            } else {
+                std::cout << "Queue is empty. Failed to dequeue data." << std::endl;
+            }
+        } else {
+            std::cout << "Invalid command. Try again." << std::endl;
         }
     }
 }

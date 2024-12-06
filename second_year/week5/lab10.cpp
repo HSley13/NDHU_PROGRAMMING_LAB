@@ -21,7 +21,7 @@ class TreeInLinkedList {
     }
 
     void addElement(T data) {
-        int k = nodeList->size();
+        int k{(int)nodeList->size()};
         if (data == 1) {
             nodeList->clear();
             nodeList = std::make_shared<std::vector<std::shared_ptr<TreeNode>>>();
