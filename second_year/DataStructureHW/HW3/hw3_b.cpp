@@ -1,3 +1,4 @@
+#include <iostream>
 #include <memory>
 
 template <class T>
@@ -17,10 +18,15 @@ class BSTNode {
     BSTNode();
     BSTNode(Element<T> &x) { data = x.key; };
 
+    int height();
+    int weight();
+    int heightBF();
+    int weightBF();
+
   private:
-    std::unique_ptr<BSTNode<T>> LeftChild;
+    std::shared_ptr<BSTNode<T>> LeftChild;
     T data;
-    std::unique_ptr<BSTNode<T>> RightChild;
+    std::shared_ptr<BSTNode<T>> RightChild;
 };
 
 template <class T>
@@ -30,6 +36,11 @@ class BST {
     std::shared_ptr<BSTNode<T>> Search(std::shared_ptr<BSTNode<T>> b, const Element<T> &x);
     std::shared_ptr<BSTNode<T>> IterSearch(const Element<T> &x);
     void Insert(const Element<T> &x);
+
+    int height();
+    int weight();
+    int heightBF();
+    int weightBF();
 
   private:
     std::shared_ptr<BSTNode<T>> root;
@@ -43,9 +54,12 @@ std::shared_ptr<BSTNode<T>> BST<T>::Search(const Element<T> &x) {
 template <class T>
 std::shared_ptr<BSTNode<T>> BST<T>::Search(std::shared_ptr<BSTNode<T>> b, const Element<T> &x) {
     if (!b) return nullptr;
+
     if (x.key == b->data) return b;
+
     if (x.key < b->data)
         return Search(b->LeftChild, x);
+
     return Search(b->RightChild, x);
 }
 
@@ -74,6 +88,7 @@ void BST<T>::Insert(const Element<T> &x) {
             return;
         }
     }
+
     p = std::make_shared<BSTNode<T>>(x);
     if (root) {
         if (x.key < pp->data)
@@ -83,4 +98,74 @@ void BST<T>::Insert(const Element<T> &x) {
     } else {
         root = p;
     }
+}
+
+template <class T>
+int BST<T>::height() {
+    if (!root) return -1;
+    return root->height();
+}
+
+template <class T>
+int BST<T>::weight() {
+    if (!root) return 0;
+    return root->weight();
+}
+
+template <class T>
+int BST<T>::heightBF() {
+    if (!root) return 0;
+    return root->heightBF();
+}
+
+template <class T>
+int BST<T>::weightBF() {
+    if (!root) return 0;
+    return root->weightBF();
+}
+
+template <class T>
+int BSTNode<T>::height() {
+    int leftHeight = (LeftChild) ? LeftChild->height() : -1;
+    int rightHeight = (RightChild) ? RightChild->height() : -1;
+    return 1 + std::max(leftHeight, rightHeight);
+}
+
+template <class T>
+int BSTNode<T>::weight() {
+    int leftWeight = (LeftChild) ? LeftChild->weight() : 0;
+    int rightWeight = (RightChild) ? RightChild->weight() : 0;
+    return 1 + leftWeight + rightWeight;
+}
+
+template <class T>
+int BSTNode<T>::heightBF() {
+    int leftHeight = (LeftChild) ? LeftChild->height() : -1;
+    int rightHeight = (RightChild) ? RightChild->height() : -1;
+    return leftHeight - rightHeight;
+}
+
+template <class T>
+int BSTNode<T>::weightBF() {
+    int leftWeight = (LeftChild) ? LeftChild->weight() : 0;
+    int rightWeight = (RightChild) ? RightChild->weight() : 0;
+    return leftWeight - rightWeight;
+}
+
+int main(void) {
+    BST<int> tree;
+
+    Element<int> e1{50}, e2{30}, e3{20}, e4{40}, e5{70}, e6{60}, e7{80};
+    tree.Insert(e1);
+    tree.Insert(e2);
+    tree.Insert(e3);
+    tree.Insert(e4);
+    tree.Insert(e5);
+    tree.Insert(e6);
+    tree.Insert(e7);
+
+    std::cout << "Height of the tree: " << tree.height() << std::endl;
+    std::cout << "Weight of the tree: " << tree.weight() << std::endl;
+    std::cout << "Height balance factor of the tree: " << tree.heightBF() << std::endl;
+    std::cout << "Weight balance factor of the tree: " << tree.weightBF() << std::endl;
 }
