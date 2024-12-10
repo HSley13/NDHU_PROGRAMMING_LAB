@@ -14,7 +14,7 @@ class SuffixTreeNode {
     void insertSuffix(const std::string &text, std::size_t index) {
         SuffixTreeNode *current{this};
         for (std::size_t i{index}; i < text.size(); i++) {
-            char ch = text[i];
+            char ch{text[i]};
             if (current->children.find(ch) == current->children.end()) {
                 current->children[ch] = std::make_shared<SuffixTreeNode>();
             }

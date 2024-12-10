@@ -24,12 +24,6 @@ class TextProcessor {
         processFile();
     }
 
-    ~TextProcessor() {
-        inputFile.close();
-        wordCountFile.close();
-        charCountFile.close();
-    }
-
   private:
     std::ifstream inputFile;
     std::ofstream wordCountFile;

@@ -46,9 +46,9 @@ class MaxHeap {
 
     void siftDown(int index) {
         while (true) {
-            int leftChildIndex = 2 * index + 1;
-            int rightChildIndex = 2 * index + 2;
-            int largestIndex = index;
+            int leftChildIndex{2 * index + 1};
+            int rightChildIndex{2 * index + 2};
+            int largestIndex{index};
 
             if (leftChildIndex < heap.size() && heap[leftChildIndex] > heap[largestIndex]) {
                 largestIndex = leftChildIndex;

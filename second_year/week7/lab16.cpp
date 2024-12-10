@@ -56,7 +56,7 @@ class Trie {
         if (node == root) {
             std::cout << "[]" << std::endl;
         } else {
-            auto it = std::find_if(parent->children.begin(), parent->children.end(), [&](const std::pair<char, std::shared_ptr<TrieNode>> &child) { return child.second == node; });
+            auto it{std::find_if(parent->children.begin(), parent->children.end(), [&](const std::pair<char, std::shared_ptr<TrieNode>> &child) { return child.second == node; })};
             if (it != parent->children.end()) {
                 std::cout << it->first;
             }
