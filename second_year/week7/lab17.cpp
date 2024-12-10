@@ -53,8 +53,8 @@ class AVLTree {
     }
 
     std::shared_ptr<BinaryTreeNode<T>> rightRotate(std::shared_ptr<BinaryTreeNode<T>> y) {
-        std::shared_ptr<BinaryTreeNode<T>> x = y->left;
-        std::shared_ptr<BinaryTreeNode<T>> T2 = x->right;
+        std::shared_ptr<BinaryTreeNode<T>> x{y->left};
+        std::shared_ptr<BinaryTreeNode<T>> T2{x->right};
 
         x->right = y;
         y->left = T2;
@@ -66,8 +66,8 @@ class AVLTree {
     }
 
     std::shared_ptr<BinaryTreeNode<T>> leftRotate(std::shared_ptr<BinaryTreeNode<T>> x) {
-        std::shared_ptr<BinaryTreeNode<T>> y = x->right;
-        std::shared_ptr<BinaryTreeNode<T>> T2 = y->left;
+        std::shared_ptr<BinaryTreeNode<T>> y{x->right};
+        std::shared_ptr<BinaryTreeNode<T>> T2{y->left};
 
         y->left = x;
         x->right = T2;
@@ -93,7 +93,7 @@ class AVLTree {
 
         node->height = 1 + std::max(height(node->left), height(node->right));
 
-        int balance = getBalance(node);
+        int balance{getBalance(node)};
 
         if (balance > 1 && data < node->left->data) {
             return rightRotate(node);

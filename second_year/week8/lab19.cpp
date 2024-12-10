@@ -32,7 +32,7 @@ class BinarySearchThreadedTree {
     }
 
     void print() {
-        std::shared_ptr<BinaryThreadedTreeNode<T>> node = leftmost(root);
+        std::shared_ptr<BinaryThreadedTreeNode<T>> node{leftmost(root)};
         while (node) {
             std::cout << node->data << " ";
             if (node->isThread) {
@@ -83,8 +83,7 @@ class BinarySearchThreadedTree {
         }
     }
 
-    std::shared_ptr<BinaryThreadedTreeNode<T>>
-    leftmost(std::shared_ptr<BinaryThreadedTreeNode<T>> node) {
+    std::shared_ptr<BinaryThreadedTreeNode<T>> leftmost(std::shared_ptr<BinaryThreadedTreeNode<T>> node) {
         while (node && node->left) {
             node = node->left;
         }

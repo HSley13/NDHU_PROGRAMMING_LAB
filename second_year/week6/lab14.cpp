@@ -52,7 +52,7 @@ class MinMaxHeap {
         if (heap.size() == 1) {
             heap.pop_back();
         } else {
-            int maxIndex = (heap.size() > 2 && heap[2] > heap[1]) ? 2 : 1;
+            int maxIndex{(heap.size() > 2 && heap[2] > heap[1]) ? 2 : 1};
             heap[maxIndex] = heap.back();
             heap.pop_back();
 
@@ -140,7 +140,7 @@ class MinMaxHeap {
         }
 
         for (int i{0}; i < 4; i++) {
-            int grandChild = 4 * index + 3 + i;
+            int grandChild{4 * index + 3 + i};
             if (grandChild < heap.size() && ((findMin && heap[grandChild] < heap[extremumIndex]) || (!findMin && heap[grandChild] > heap[extremumIndex]))) {
                 extremumIndex = grandChild;
             }
