@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <iostream>
 #include <memory>
 
@@ -8,22 +9,16 @@ class Element {
 };
 
 template <class T>
-class BST;
-
-template <class T>
 class BSTNode {
-    friend class BST<T>;
-
   public:
-    BSTNode();
-    BSTNode(Element<T> &x) { data = x.key; };
+    BSTNode() : LeftChild(nullptr), RightChild(nullptr) {}
+    BSTNode(const Element<T> &x) : data(x.key), LeftChild(nullptr), RightChild(nullptr) {}
 
     int height();
     int weight();
     int heightBF();
     int weightBF();
 
-  private:
     std::shared_ptr<BSTNode<T>> LeftChild;
     T data;
     std::shared_ptr<BSTNode<T>> RightChild;
@@ -37,6 +32,9 @@ class BST {
     std::shared_ptr<BSTNode<T>> IterSearch(const Element<T> &x);
     void Insert(const Element<T> &x);
 
+    // Print elements in in-order traversal
+    void PrintInOrder() const;
+
     int height();
     int weight();
     int heightBF();
@@ -44,6 +42,8 @@ class BST {
 
   private:
     std::shared_ptr<BSTNode<T>> root;
+
+    void PrintInOrderRecursive(std::shared_ptr<BSTNode<T>> node) const;
 };
 
 template <class T>
@@ -65,7 +65,8 @@ std::shared_ptr<BSTNode<T>> BST<T>::Search(std::shared_ptr<BSTNode<T>> b, const 
 
 template <class T>
 std::shared_ptr<BSTNode<T>> BST<T>::IterSearch(const Element<T> &x) {
-    for (std::shared_ptr<BSTNode<T>> t{root}; t;) {
+    std::shared_ptr<BSTNode<T>> t{root};
+    while (t) {
         if (x.key == t->data) return t;
         if (x.key < t->data)
             t = t->LeftChild;
@@ -90,7 +91,8 @@ void BST<T>::Insert(const Element<T> &x) {
     }
 
     p = std::make_shared<BSTNode<T>>(x);
-    if (root) {
+
+    if (pp) {
         if (x.key < pp->data)
             pp->LeftChild = p;
         else
@@ -126,30 +128,47 @@ int BST<T>::weightBF() {
 
 template <class T>
 int BSTNode<T>::height() {
-    int leftHeight = (LeftChild) ? LeftChild->height() : -1;
-    int rightHeight = (RightChild) ? RightChild->height() : -1;
+    int leftHeight{(LeftChild) ? LeftChild->height() : -1};
+    int rightHeight{(RightChild) ? RightChild->height() : -1};
     return 1 + std::max(leftHeight, rightHeight);
 }
 
 template <class T>
 int BSTNode<T>::weight() {
-    int leftWeight = (LeftChild) ? LeftChild->weight() : 0;
-    int rightWeight = (RightChild) ? RightChild->weight() : 0;
+    int leftWeight{(LeftChild) ? LeftChild->weight() : 0};
+    int rightWeight{(RightChild) ? RightChild->weight() : 0};
     return 1 + leftWeight + rightWeight;
 }
 
 template <class T>
 int BSTNode<T>::heightBF() {
-    int leftHeight = (LeftChild) ? LeftChild->height() : -1;
-    int rightHeight = (RightChild) ? RightChild->height() : -1;
+    int leftHeight{(LeftChild) ? LeftChild->height() : -1};
+    int rightHeight{(RightChild) ? RightChild->height() : -1};
+
     return leftHeight - rightHeight;
 }
 
 template <class T>
 int BSTNode<T>::weightBF() {
-    int leftWeight = (LeftChild) ? LeftChild->weight() : 0;
-    int rightWeight = (RightChild) ? RightChild->weight() : 0;
+    int leftWeight{(LeftChild) ? LeftChild->weight() : 0};
+    int rightWeight{(RightChild) ? RightChild->weight() : 0};
+
     return leftWeight - rightWeight;
+}
+
+template <class T>
+void BST<T>::PrintInOrder() const {
+    PrintInOrderRecursive(root);
+    std::cout << std::endl;
+}
+
+template <class T>
+void BST<T>::PrintInOrderRecursive(std::shared_ptr<BSTNode<T>> node) const {
+    if (!node) return;
+
+    PrintInOrderRecursive(node->LeftChild);
+    std::cout << node->data << " ";
+    PrintInOrderRecursive(node->RightChild);
 }
 
 int main(void) {
@@ -168,4 +187,17 @@ int main(void) {
     std::cout << "Weight of the tree: " << tree.weight() << std::endl;
     std::cout << "Height balance factor of the tree: " << tree.heightBF() << std::endl;
     std::cout << "Weight balance factor of the tree: " << tree.weightBF() << std::endl;
+
+    std::cout << "In-order traversal of the tree: ";
+    tree.PrintInOrder();
+
+    Element<int> e{100};
+    std::shared_ptr<BSTNode<int>> node{std::make_shared<BSTNode<int>>(e)};
+    std::cout << "Node height (no children): " << node->height() << std::endl;
+    std::cout << "Node weight (no children): " << node->weight() << std::endl;
+
+    node->LeftChild = std::make_shared<BSTNode<int>>(Element<int>{50});
+    node->RightChild = std::make_shared<BSTNode<int>>(Element<int>{150});
+    std::cout << "Node height (two children): " << node->height() << std::endl;
+    std::cout << "Node weight (two children): " << node->weight() << std::endl;
 }
