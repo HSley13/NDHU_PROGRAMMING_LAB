@@ -2,7 +2,10 @@
 #include <ctime>
 #include <iostream>
 #include <memory>
+#include <queue>
+#include <stack>
 #include <stdexcept>
+#include <unordered_set>
 
 template <class T>
 class Node {
@@ -189,9 +192,53 @@ class WeightedGraph {
     }
 
     void BFS(std::shared_ptr<WeightedGraphVertex<V, E>> v) {
+        std::unordered_set<std::shared_ptr<WeightedGraphVertex<V, E>>> visited;
+        std::queue<std::shared_ptr<WeightedGraphVertex<V, E>>> q;
+        q.push(v);
+        visited.insert(v);
+
+        while (!q.empty()) {
+            std::shared_ptr<WeightedGraphVertex<V, E>> current = q.front();
+            q.pop();
+            std::cout << current->getData() << " ";
+
+            for (int i = 0;; i++) {
+                try {
+                    std::shared_ptr<WeightedGraphEdge<V, E>> edge = current->operator[](i).getData();
+                    std::shared_ptr<WeightedGraphVertex<V, E>> neighbor = edge->getAnotherEnd(current);
+                    if (visited.find(neighbor) == visited.end()) {
+                        q.push(neighbor);
+                        visited.insert(neighbor);
+                    }
+                } catch (const std::invalid_argument &) {
+                    break;
+                }
+            }
+        }
     }
 
     void DFS(std::shared_ptr<WeightedGraphVertex<V, E>> v) {
+        std::unordered_set<std::shared_ptr<WeightedGraphVertex<V, E>>> visited;
+        std::stack<std::shared_ptr<WeightedGraphVertex<V, E>>> s;
+        s.push(v);
+
+        while (!s.empty()) {
+            std::shared_ptr<WeightedGraphVertex<V, E>> current = s.top();
+            s.pop();
+            if (visited.find(current) == visited.end()) {
+                std::cout << current->getData() << " ";
+                visited.insert(current);
+                for (int i = 0;; i++) {
+                    try {
+                        std::shared_ptr<WeightedGraphEdge<V, E>> edge = current->operator[](i).getData();
+                        std::shared_ptr<WeightedGraphVertex<V, E>> neighbor = edge->getAnotherEnd(current);
+                        s.push(neighbor);
+                    } catch (const std::invalid_argument &) {
+                        break;
+                    }
+                }
+            }
+        }
     }
 
   private:
@@ -206,7 +253,7 @@ int main(void) {
     int n;
     std::scanf("%d", &n);
     std::srand(n);
-    for (int j = 0; j < 26; j++) {
+    for (int j{0}; j < 26; j++) {
         node->addFromTail(g->addVertex(static_cast<char>(j + 'A')));
     }
 

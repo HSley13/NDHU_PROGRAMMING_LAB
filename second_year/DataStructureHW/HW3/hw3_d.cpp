@@ -1,3 +1,4 @@
+#include <functional>
 #include <iostream>
 #include <memory>
 
@@ -26,6 +27,20 @@ class LinkedBinaryTree {
     }
 
     void inorderTraversal() {
+        std::function<void(std::shared_ptr<Node> node)> inorderTraversal = [&](std::shared_ptr<Node> node) {
+            if (!node) return;
+
+            inorderTraversal(node->left);
+
+            std::shared_ptr<Node> current{node};
+            while (current) {
+                std::cout << current->data << " ";
+                current = current->next;
+            }
+
+            inorderTraversal(node->right);
+        };
+
         inorderTraversal(root);
     }
 
@@ -65,20 +80,6 @@ class LinkedBinaryTree {
         }
 
         return search(node->right, value);
-    }
-
-    void inorderTraversal(std::shared_ptr<Node> node) {
-        if (!node) return;
-
-        inorderTraversal(node->left);
-
-        std::shared_ptr<Node> current{node};
-        while (current) {
-            std::cout << current->data << " ";
-            current = current->next;
-        }
-
-        inorderTraversal(node->right);
     }
 };
 
