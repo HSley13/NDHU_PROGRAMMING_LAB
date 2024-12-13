@@ -160,38 +160,38 @@ class Graph {
 };
 
 void runTest(const std::vector<std::pair<char, char>> &edges, int vertexCount, const std::string &testName) {
-    std::cout << "Running Test: " << testName << "\n";
+    std::cout << "Running Test: " << testName << std::endl;
 
     std::shared_ptr<Graph<char>> g{std::make_shared<Graph<char>>()};
 
-    // Add vertices A, B, C, ...
     for (int i{0}; i < vertexCount; i++) {
         g->addVertex(i + 'A');
     }
 
-    // Add edges
-    for (const auto &edge : edges) {
+    for (const std::pair<char, char> &edge : edges) {
         g->addLink(edge.first, edge.second);
     }
 
-    bool result = g->isForest();
+    bool result{g->isForest()};
 
     std::cout << "Graph Vertices: ";
     for (int i{0}; i < vertexCount; i++) {
         std::cout << static_cast<char>(i + 'A') << " ";
     }
-    std::cout << "\n";
+    std::cout << std::endl;
 
     std::cout << "Graph Edges: ";
-    for (const auto &edge : edges) {
+    for (const std::pair<char, char> &edge : edges) {
         std::cout << "(" << edge.first << ", " << edge.second << ") ";
     }
-    std::cout << "\n";
+    std::cout << std::endl;
 
-    std::cout << "Is Forest: " << (result ? "YES" : "NO") << "\n\n";
+    std::cout << "Is Forest: " << (result ? "YES" : "NO") << std::endl
+              << std::endl;
 }
 
-int main() {
+// My main function to run the tests
+int main(void) {
     // Test 1: Simple Tree (A - B, B - C)
     runTest({{'A', 'B'}, {'B', 'C'}}, 3, "Simple Tree");
 
@@ -211,8 +211,13 @@ int main() {
     runTest({{'A', 'B'}, {'B', 'C'}, {'C', 'D'}, {'D', 'E'}}, 5, "Large Tree Structure");
 
     // Interactive test
-    std::cout << "\nInteractive Test: Enter the number of vertices and edges (m n)\n";
-    int m, n;
+    std::cout << "\nInteractive Test: Enter the number of vertices and edges (m n)" << std::endl;
+}
+
+/*
+ * OJ main function
+ * int main(void){
+ *     int m, n;
     std::cin >> m >> n;
 
     std::shared_ptr<Graph<char>> g{std::make_shared<Graph<char>>()};
@@ -222,13 +227,14 @@ int main() {
         g->addVertex(i + 'A');
     }
 
-    std::cout << "Enter the edges in the format 's d' where s and d are vertex labels (e.g., A B):\n";
+    std::cout << "Enter the edges in the format 's d' where s and d are vertex labels (e.g., A B): " << std::endl;
     for (int j{0}; j < n; j++) {
         char s, d;
         std::cin >> s >> d;
         g->addLink(s, d);
     }
 
-    bool result = g->isForest();
-    std::cout << "Is Forest: " << (result ? "YES" : "NO") << "\n";
-}
+    bool result{g->isForest()};
+    std::cout << "Is Forest: " << (result ? "YES" : "NO") << std::endl;
+
+ * }*/
