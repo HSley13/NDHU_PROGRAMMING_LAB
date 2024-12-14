@@ -209,9 +209,6 @@ int main(void) {
 
     // Test 6: Large Tree Structure (A - B, B - C, C - D, D - E)
     runTest({{'A', 'B'}, {'B', 'C'}, {'C', 'D'}, {'D', 'E'}}, 5, "Large Tree Structure");
-
-    // Interactive test
-    std::cout << "\nInteractive Test: Enter the number of vertices and edges (m n)" << std::endl;
 }
 
 /*
