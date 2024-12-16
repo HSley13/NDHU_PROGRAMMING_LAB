@@ -267,7 +267,7 @@ int main(void) {
     std::shared_ptr<Hash<int, std::string>> hash{std::make_shared<Hash<int, std::string>>()};
 
     for (int j{1000}; j < 1024; j++) {
-        std::shared_ptr<Hash<int, std::string>::Pair> p = std::make_shared<Hash<int, std::string>::Pair>(j, std::to_string(j));
+        std::shared_ptr<Hash<int, std::string>::Pair> p{std::make_shared<Hash<int, std::string>::Pair>(j, std::to_string(j))};
         hash->insert(p);
     }
 
