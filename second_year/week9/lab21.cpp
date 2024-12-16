@@ -120,15 +120,13 @@ class Graph {
 
     bool isForest() {
         std::unordered_map<T, bool> visited;
-        for (const auto &pair : vertex) {
+        for (const std::pair<T, std::shared_ptr<GraphNode<T>>> &pair : vertex) {
             visited[pair.first] = false;
         }
 
-        for (const auto &pair : vertex) {
-            if (!visited[pair.first]) {
-                if (hasCycle(pair.second, nullptr, visited)) {
-                    return false;
-                }
+        for (const std::pair<T, std::shared_ptr<GraphNode<T>>> &pair : vertex) {
+            if (!visited[pair.first] && hasCycle(pair.second, nullptr, visited)) {
+                return false;
             }
         }
         return true;
@@ -141,14 +139,12 @@ class Graph {
     bool hasCycle(std::shared_ptr<GraphNode<T>> node, std::shared_ptr<GraphNode<T>> parent, std::unordered_map<T, bool> &visited) {
         visited[node->getData()] = true;
 
-        auto current{node->getLinks()->getHead()};
+        std::shared_ptr<ListNode<std::shared_ptr<GraphNode<T>>>> current{node->getLinks()->getHead()};
         while (current) {
             std::shared_ptr<GraphNode<T>> neighbor{current->getData()};
 
-            if (!visited[neighbor->getData()]) {
-                if (hasCycle(neighbor, node, visited)) {
-                    return true;
-                }
+            if (!visited[neighbor->getData()] && hasCycle(neighbor, node, visited)) {
+                return true;
             } else if (neighbor != parent) {
                 return true;
             }

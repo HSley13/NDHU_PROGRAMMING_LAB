@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <ctime>
+#include <functional>
 #include <iostream>
 #include <limits>
 #include <memory>
@@ -75,7 +76,7 @@ class LinkList {
     LinkList() : head(nullptr), tail(nullptr) {}
 
     void addFromHead(T d) {
-        auto node{std::make_shared<ListNode<T>>(d)};
+        std::shared_ptr<ListNode<T>> node{std::make_shared<ListNode<T>>(d)};
         if (head != nullptr) {
             head->setPrev(node);
         }
@@ -88,32 +89,50 @@ class LinkList {
     }
 
     void addFromTail(T d) {
-        auto node{std::make_shared<ListNode<T>>(d)};
+        std::shared_ptr<ListNode<T>> node{std::make_shared<ListNode<T>>(d)};
         if (tail != nullptr) {
             tail->setNext(node);
         }
 
         node->setPrev(tail);
         tail = node;
-        if (head == nullptr)
+        if (head == nullptr) {
             head = tail;
+        }
+    }
+
+    void addAfter(std::shared_ptr<ListNode<T>> node, T d) {
+        if (!exist(node)) {
+            return;
+        }
+
+        std::shared_ptr<ListNode<T>> newNode{std::make_shared<ListNode<T>>(d)};
+        if (node->getNext() != nullptr)
+            node->getNext()->setPrev(newNode);
+
+        newNode->setNext(node->getNext());
+        node->setNext(newNode);
+        newNode->setPrev(node);
+
+        if (newNode->getNext() == nullptr)
+            tail = newNode;
     }
 
     std::shared_ptr<ListNode<T>> removeFromHead() {
-        std::shared_ptr<ListNode<T>> n{head};
+        std::shared_ptr<ListNode<T>> node{head};
         if (head != nullptr) {
             head = head->getNext();
             if (head != nullptr)
                 head->setPrev(nullptr);
             else
                 tail = nullptr;
-            n->setNext(nullptr);
+            node->setNext(nullptr);
         }
-        return n;
+        return node;
     }
 
     std::shared_ptr<ListNode<T>> removeFromTail() {
-        std::shared_ptr<ListNode<T>> n{tail};
+        std::shared_ptr<ListNode<T>> node{tail};
         if (tail != nullptr) {
             tail = tail->getPrev();
 
@@ -121,16 +140,61 @@ class LinkList {
                 tail->setNext(nullptr);
             else
                 head = nullptr;
-            n->setPrev(nullptr);
+            node->setPrev(nullptr);
         }
-        return n;
+        return node;
+    }
+
+    std::shared_ptr<ListNode<T>> remove(std::shared_ptr<ListNode<T>> node) {
+        if (!exist(node)) {
+            return nullptr;
+        }
+
+        if (node == head) {
+            return removeFromHead();
+        } else if (node == tail) {
+            return removeFromTail();
+        } else {
+            node->getPrev()->setNext(node->getNext());
+            node->getNext()->setPrev(node->getPrev());
+            node->setPrev(nullptr);
+            node->setNext(nullptr);
+            return node;
+        }
+    }
+
+    bool exist(std::shared_ptr<ListNode<T>> node) {
+        for (std::shared_ptr<ListNode<T>> j{head}; j != nullptr; j = j->getNext()) {
+            if (j == node) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    std::shared_ptr<ListNode<T>> exist(T d) {
+        for (std::shared_ptr<ListNode<T>> j{head}; j != nullptr; j = j->getNext()) {
+            if (j->getData() == d) {
+                return j;
+            }
+        }
+        return nullptr;
+    }
+
+    std::shared_ptr<const ListNode<T>> &operator[](int n) {
+        std::shared_ptr<ListNode<T>> j{head};
+        for (int i{0}; i < n; i++) {
+            if (j == nullptr) {
+                throw std::out_of_range("Index out of range");
+            }
+            j = j->getNext();
+        }
+        return j;
     }
 
     void print() const {
-        std::shared_ptr<ListNode<T>> j{head};
-        while (j != nullptr) {
+        for (std::shared_ptr<ListNode<T>> j{head}; j != nullptr; j = j->getNext()) {
             std::cout << *j << " ";
-            j = j->getNext();
         }
         std::cout << std::endl;
     }
@@ -156,15 +220,14 @@ class WeightedGraphVertex : public Node<V> {
     std::shared_ptr<ListNode<WeightedGraphEdge<V, E> *>> operator[](int n) {
         std::shared_ptr<ListNode<WeightedGraphEdge<V, E> *>> cur{list->head};
 
-        int i{0};
-        while (cur != nullptr) {
+        for (int i{0}; cur != nullptr; i++) {
             if (i == n) {
                 return cur;
             }
 
             cur = cur->getNext();
-            i++;
         }
+
         return nullptr;
     }
 
@@ -197,7 +260,7 @@ class WeightedGraph {
                       edge(std::make_shared<LinkList<std::shared_ptr<WeightedGraphEdge<V, E>>>>()) {}
 
     std::shared_ptr<WeightedGraphVertex<V, E>> operator[](int n) {
-        std::shared_ptr<ListNode<std::shared_ptr<WeightedGraphVertex<V, E>>>> cur = vertex->head;
+        std::shared_ptr<ListNode<std::shared_ptr<WeightedGraphVertex<V, E>>>> cur{vertex->head};
 
         int i{0};
         while (cur != nullptr) {
@@ -208,12 +271,12 @@ class WeightedGraph {
             cur = cur->getNext();
             i++;
         }
+
         return nullptr;
     }
 
     void addLink(std::shared_ptr<WeightedGraphVertex<V, E>> v1, std::shared_ptr<WeightedGraphVertex<V, E>> v2, E w) {
-        auto edge{std::make_shared<WeightedGraphEdge<V, E>>(w, v1, v2)};
-
+        std::shared_ptr<WeightedGraphEdge<V, E>> edge{std::make_shared<WeightedGraphEdge<V, E>>(w, v1, v2)};
         v1->addEdge(edge);
         if (v1 != v2) {
             v2->addEdge(edge);
@@ -223,7 +286,7 @@ class WeightedGraph {
     }
 
     std::shared_ptr<WeightedGraphVertex<V, E>> addVertex(V d) {
-        auto v{std::make_shared<WeightedGraphVertex<V, E>>(d)};
+        std::shared_ptr<WeightedGraphVertex<V, E>> v{std::make_shared<WeightedGraphVertex<V, E>>(d)};
 
         vertex->addFromTail(v);
         vertexCount++;
@@ -233,11 +296,10 @@ class WeightedGraph {
 
     void adjList() {
         std::shared_ptr<ListNode<std::shared_ptr<WeightedGraphVertex<V, E>>>> cur{vertex->head};
-
         while (cur != nullptr) {
-            auto temp = cur->getData();
+            std::shared_ptr<WeightedGraphVertex<V, E>> temp{cur->getData()};
             std::cout << *temp << ": ";
-            std::shared_ptr<ListNode<WeightedGraphEdge<V, E> *>> e = (*temp)[0];
+            std::shared_ptr<ListNode<WeightedGraphEdge<V, E> *>> e{(*temp)[0]};
 
             while (e != nullptr) {
                 std::cout << e->getData()->getAnotherEnd(temp) << "(" << e->getData()->getData() << ") ";
@@ -250,13 +312,13 @@ class WeightedGraph {
     }
 
     std::shared_ptr<WeightedGraph> minimumSpanningTree(std::shared_ptr<WeightedGraphVertex<V, E>> start) {
-        auto mst{std::make_shared<WeightedGraph<V, E>>()};
+        std::shared_ptr<WeightedGraph<V, E>> mst{std::make_shared<WeightedGraph<V, E>>()};
 
         std::vector<bool> visited(vertexCount, false);
         std::vector<E> minEdge(vertexCount, std::numeric_limits<E>::max());
         minEdge[start->getData()] = 0;
 
-        auto compare = [&](std::shared_ptr<WeightedGraphVertex<V, E>> a, std::shared_ptr<WeightedGraphVertex<V, E>> b) {
+        std::function<bool(std::shared_ptr<WeightedGraphVertex<V, E>>, std::shared_ptr<WeightedGraphVertex<V, E>>)> compare = [&](std::shared_ptr<WeightedGraphVertex<V, E>> a, std::shared_ptr<WeightedGraphVertex<V, E>> b) {
             return minEdge[a->getData()] > minEdge[b->getData()];
         };
 
@@ -264,7 +326,7 @@ class WeightedGraph {
         pq.push(start);
 
         while (!pq.empty()) {
-            auto u{pq.top()};
+            std::shared_ptr<WeightedGraphVertex<V, E>> u{pq.top()};
             pq.pop();
 
             if (visited[u->getData()]) {
@@ -275,7 +337,7 @@ class WeightedGraph {
 
             for (std::shared_ptr<ListNode<WeightedGraphEdge<V, E> *>> e{(*u)[0]}; e != nullptr; e = e->getNext()) {
                 auto edge{e->getData()};
-                auto v{edge->getAnotherEnd(u)};
+                std::shared_ptr<WeightedGraphVertex<V, E>> v{edge->getAnotherEnd(u)};
 
                 if (!visited[v->getData()] && minEdge[v->getData()] > edge->getData()) {
                     minEdge[v->getData()] = edge->getData();
