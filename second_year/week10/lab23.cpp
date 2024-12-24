@@ -1,12 +1,10 @@
 #include <cstdlib>
 #include <ctime>
-#include <functional>
 #include <iostream>
 #include <limits>
 #include <memory>
 #include <queue>
-#include <set>
-#include <utility>
+#include <unordered_map>
 #include <vector>
 
 template <class T>
@@ -316,6 +314,7 @@ class WeightedGraph {
     }
 
     std::shared_ptr<WeightedGraph> shortestPathTree(std::shared_ptr<WeightedGraphVertex<V, E>> start) {
+        return nullptr;
     }
 
   private:
@@ -326,7 +325,7 @@ class WeightedGraph {
 };
 
 int main(void) {
-    std::shared_ptr<WeightedGraph<char, int>> g = std::make_shared<WeightedGraph<char, int>>();
+    std::shared_ptr<WeightedGraph<char, int>> g{std::make_shared<WeightedGraph<char, int>>()};
     std::shared_ptr<WeightedGraph<char, int>> tree;
 
     srand(time(NULL));

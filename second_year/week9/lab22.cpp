@@ -286,8 +286,12 @@ class WeightedGraph {
     }
 
     std::shared_ptr<WeightedGraphVertex<V, E>> addVertex(V d) {
+        for (std::shared_ptr<ListNode<std::shared_ptr<WeightedGraphVertex<V, E>>>> j{vertex->head}; j != nullptr; j = j->getNext()) {
+            if (j->getData()->getData() == d) {
+                return j->getData();
+            }
+        }
         std::shared_ptr<WeightedGraphVertex<V, E>> v{std::make_shared<WeightedGraphVertex<V, E>>(d)};
-
         vertex->addFromTail(v);
         vertexCount++;
 
@@ -312,41 +316,7 @@ class WeightedGraph {
     }
 
     std::shared_ptr<WeightedGraph> minimumSpanningTree(std::shared_ptr<WeightedGraphVertex<V, E>> start) {
-        std::shared_ptr<WeightedGraph<V, E>> mst{std::make_shared<WeightedGraph<V, E>>()};
-
-        std::vector<bool> visited(vertexCount, false);
-        std::vector<E> minEdge(vertexCount, std::numeric_limits<E>::max());
-        minEdge[start->getData()] = 0;
-
-        std::function<bool(std::shared_ptr<WeightedGraphVertex<V, E>>, std::shared_ptr<WeightedGraphVertex<V, E>>)> compare = [&](std::shared_ptr<WeightedGraphVertex<V, E>> a, std::shared_ptr<WeightedGraphVertex<V, E>> b) {
-            return minEdge[a->getData()] > minEdge[b->getData()];
-        };
-
-        std::priority_queue<std::shared_ptr<WeightedGraphVertex<V, E>>, std::vector<std::shared_ptr<WeightedGraphVertex<V, E>>>, decltype(compare)> pq(compare);
-        pq.push(start);
-
-        while (!pq.empty()) {
-            std::shared_ptr<WeightedGraphVertex<V, E>> u{pq.top()};
-            pq.pop();
-
-            if (visited[u->getData()]) {
-                continue;
-            }
-
-            visited[u->getData()] = true;
-
-            for (std::shared_ptr<ListNode<WeightedGraphEdge<V, E> *>> e{(*u)[0]}; e != nullptr; e = e->getNext()) {
-                auto edge{e->getData()};
-                std::shared_ptr<WeightedGraphVertex<V, E>> v{edge->getAnotherEnd(u)};
-
-                if (!visited[v->getData()] && minEdge[v->getData()] > edge->getData()) {
-                    minEdge[v->getData()] = edge->getData();
-                    pq.push(v);
-                    mst->addLink(u, v, edge->getData());
-                }
-            }
-        }
-        return mst;
+        return nullptr;
     }
 
   private:

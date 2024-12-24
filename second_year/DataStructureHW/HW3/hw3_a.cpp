@@ -126,7 +126,6 @@ int main(void) {
     try {
         List<int> myList;
 
-        // Test Attach
         myList.Attach(10);
         myList.Attach(20);
         myList.Attach(30);
@@ -136,15 +135,12 @@ int main(void) {
         std::cout << "List after Attach: ";
         myList.print();
 
-        // Test appearM
         std::cout << "Does 20 Appear at least 2 times? " << (myList.appearM(20, 2) ? "Yes" : "No") << std::endl;
 
-        // Test replaceAll
         int replacedCount = myList.replaceAll(20, 99);
         std::cout << "Replaced 20 with 99 " << replacedCount << " times. " << "List after replaceAll: ";
         myList.print();
 
-        // Test rotate (left and right)
         myList.rotate('L', 2);
         std::cout << "List after left rotation by 2: ";
         myList.print();
@@ -153,7 +149,6 @@ int main(void) {
         std::cout << "List after right rotation by 2: ";
         myList.print();
 
-        // Test sublist
         List<int> subList = myList.sublist(1, 4);
         std::cout << "Sublist from index 1 to 4: ";
         subList.print();

@@ -31,8 +31,8 @@ class BST {
     std::shared_ptr<BSTNode<T>> Search(std::shared_ptr<BSTNode<T>> b, const Element<T> &x);
     std::shared_ptr<BSTNode<T>> IterSearch(const Element<T> &x);
     void Insert(const Element<T> &x);
+    void checkChildrenAndPrint(std::shared_ptr<BSTNode<T>> node);
 
-    // Print elements in in-order traversal
     void PrintInOrder() const;
 
     int height();
@@ -171,10 +171,37 @@ void BST<T>::PrintInOrderRecursive(std::shared_ptr<BSTNode<T>> node) const {
     PrintInOrderRecursive(node->RightChild);
 }
 
+template <class T>
+void BST<T>::checkChildrenAndPrint(std::shared_ptr<BSTNode<T>> node) {
+    if (node) {
+        std::cout << std::endl;
+        std::cout << "Single Node Check: " << std::endl;
+        std::cout << "Node data: " << node->data << std::endl;
+        std::cout << "Height of the node: " << node->height() << std::endl;
+        std::cout << "Weight of the node: " << node->weight() << std::endl;
+
+        if (node->LeftChild) {
+            std::cout << "Left child data: " << node->LeftChild->data << std::endl;
+            std::cout << "Height of left child: " << node->LeftChild->height() << std::endl;
+            std::cout << "Weight of left child: " << node->LeftChild->weight() << std::endl;
+        } else {
+            std::cout << "Left child is null" << std::endl;
+        }
+
+        if (node->RightChild) {
+            std::cout << "Right child data: " << node->RightChild->data << std::endl;
+            std::cout << "Height of right child: " << node->RightChild->height() << std::endl;
+            std::cout << "Weight of right child: " << node->RightChild->weight() << std::endl;
+        } else {
+            std::cout << "Right child is null" << std::endl;
+        }
+    }
+}
+
 int main(void) {
     BST<int> tree;
 
-    Element<int> e1{50}, e2{30}, e3{20}, e4{40}, e5{70}, e6{60}, e7{80};
+    Element<int> e1{50}, e2{30}, e3{20}, e4{40}, e5{70}, e6{60}, e7{80}, e8{90}, e9{100};
     tree.Insert(e1);
     tree.Insert(e2);
     tree.Insert(e3);
@@ -182,6 +209,8 @@ int main(void) {
     tree.Insert(e5);
     tree.Insert(e6);
     tree.Insert(e7);
+    tree.Insert(e8);
+    tree.Insert(e9);
 
     std::cout << "Height of the tree: " << tree.height() << std::endl;
     std::cout << "Weight of the tree: " << tree.weight() << std::endl;
@@ -191,13 +220,6 @@ int main(void) {
     std::cout << "In-order traversal of the tree: ";
     tree.PrintInOrder();
 
-    Element<int> e{100};
-    std::shared_ptr<BSTNode<int>> node{std::make_shared<BSTNode<int>>(e)};
-    std::cout << "Node height (no children): " << node->height() << std::endl;
-    std::cout << "Node weight (no children): " << node->weight() << std::endl;
-
-    node->LeftChild = std::make_shared<BSTNode<int>>(Element<int>{50});
-    node->RightChild = std::make_shared<BSTNode<int>>(Element<int>{150});
-    std::cout << "Node height (two children): " << node->height() << std::endl;
-    std::cout << "Node weight (two children): " << node->weight() << std::endl;
+    std::shared_ptr<BSTNode<int>> searchResult = tree.Search(e5);
+    tree.checkChildrenAndPrint(searchResult);
 }

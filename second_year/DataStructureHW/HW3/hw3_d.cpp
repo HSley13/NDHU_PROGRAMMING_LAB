@@ -1,6 +1,9 @@
 #include <functional>
 #include <iostream>
+#include <map>
 #include <memory>
+#include <queue>
+#include <vector>
 
 template <class T>
 class LinkedBinaryTree {
@@ -8,121 +11,135 @@ class LinkedBinaryTree {
     class Node {
       public:
         T data;
-        std::shared_ptr<Node> left;
-        std::shared_ptr<Node> right;
-        std::shared_ptr<Node> next;
-
-        Node(T value) : data(value), left(nullptr), right(nullptr), next(nullptr) {}
+        std::shared_ptr<Node> left, right;
+        Node(T d) : data(d), left(nullptr), right(nullptr) {}
     };
 
-  public:
     LinkedBinaryTree() : root(nullptr) {}
 
     void insert(const T &value) {
-        root = insert(root, value);
-    }
+        std::shared_ptr<Node> newNode{std::make_shared<Node>(value)};
 
-    std::shared_ptr<Node> search(const T &value) {
-        return search(root, value);
-    }
+        if (!root) {
+            root = newNode;
+        } else {
+            std::shared_ptr<Node> current{incompleteNodes.front()};
 
-    void inorderTraversal() {
-        std::function<void(std::shared_ptr<Node> node)> inorderTraversal = [&](std::shared_ptr<Node> node) {
-            if (!node) return;
-
-            inorderTraversal(node->left);
-
-            std::shared_ptr<Node> current{node};
-            while (current) {
-                std::cout << current->data << " ";
-                current = current->next;
+            if (!current->left) {
+                current->left = newNode;
+            } else if (!current->right) {
+                current->right = newNode;
+                incompleteNodes.pop();
             }
+        }
 
-            inorderTraversal(node->right);
+        incompleteNodes.push(newNode);
+        headerList[value].push_back(newNode);
+    }
+
+    void printTree() {
+        if (!root) {
+            std::cout << "Tree is empty." << std::endl;
+            return;
+        }
+
+        std::function<void(std::shared_ptr<Node>, const std::string &, bool)> printTree = [&](std::shared_ptr<Node> node, const std::string &prefix, bool isLeft) {
+            if (node) {
+                std::cout << prefix;
+                std::cout << (isLeft ? "├── " : "└── ");
+                std::cout << node->data << std::endl;
+
+                printTree(node->left, prefix + (isLeft ? "│   " : "    "), true);
+                printTree(node->right, prefix + (isLeft ? "│   " : "    "), false);
+            }
         };
 
-        inorderTraversal(root);
+        printTree(root, "", true);
+    }
+
+    void printHeaderList() {
+        for (const auto &pair : headerList) {
+            std::cout << pair.first << ": ";
+            const std::vector<std::shared_ptr<Node>> &nodes = pair.second;
+            for (const auto &node : nodes) {
+                std::cout << node->data << " ";
+            }
+            std::cout << std::endl;
+        }
     }
 
   private:
     std::shared_ptr<Node> root;
-
-    std::shared_ptr<Node> insert(std::shared_ptr<Node> node, const T &value) {
-        if (!node) {
-            return std::make_shared<Node>(value);
-        }
-
-        if (value < node->data) {
-            node->left = insert(node->left, value);
-        } else if (value > node->data) {
-            node->right = insert(node->right, value);
-        } else {
-            std::shared_ptr<Node> current = node;
-            while (current->next) {
-                current = current->next;
-            }
-            current->next = std::make_shared<Node>(value);
-        }
-        return node;
-    }
-
-    std::shared_ptr<Node> search(std::shared_ptr<Node> node, const T &value) {
-        if (!node) {
-            return nullptr;
-        }
-
-        if (value == node->data) {
-            return node;
-        }
-
-        if (value < node->data) {
-            return search(node->left, value);
-        }
-
-        return search(node->right, value);
-    }
+    std::queue<std::shared_ptr<Node>> incompleteNodes;
+    std::map<T, std::vector<std::shared_ptr<Node>>> headerList;
 };
 
 int main(void) {
-    LinkedBinaryTree<int> tree;
+    LinkedBinaryTree<char> tree;
+    std::string input;
 
-    tree.insert(10);
-    tree.insert(5);
-    tree.insert(15);
-    tree.insert(10);
-    tree.insert(5);
-    tree.insert(20);
+    std::cout << "Enter a string to construct the binary tree: ";
+    std::getline(std::cin, input);
 
-    std::shared_ptr<LinkedBinaryTree<int>::Node> result{tree.search(10)};
-    if (result) {
-        std::cout << "Found node with value: " << result->data << std::endl;
-    } else {
-        std::cout << "Node not found." << std::endl;
+    for (const char &c : input) {
+        tree.insert(c);
     }
 
-    std::cout << "Inorder Traversal: ";
-    tree.inorderTraversal();
+    std::cout << "Tree structure:" << std::endl;
+    tree.printTree();
     std::cout << std::endl;
+
+    std::cout << "Unordered map of vectors for all letters:" << std::endl;
+    tree.printHeaderList();
 }
 
 /*
-    Applications of Linked Binary Trees:
+----------------- 1. Database Indexing
+In a database, a tree-like structure can be used for indexing rows or records based on a particular field (e.g., a unique key or identifier).
+The headerList can map a field value to all rows that share that value.
+This could be used in database systems like SQL or NoSQL for fast lookups:
 
-    1. **Binary Search Trees (BSTs)**:
-        - Linked binary trees are often used to implement binary search trees (BSTs), which are crucial for efficient searching, insertion, and deletion of elements. In a BST, each node's left child is smaller than the node, and the right child is larger, ensuring that all operations like search, insert, and delete take O(log n) time on average.
-        - **Example**: Consider a dictionary application where words are stored in a binary search tree. When a user searches for a word, the application can traverse the tree from the root, checking if the word is smaller or larger than the current node, leading to a quick find. Similarly, new words can be added, or existing words can be deleted with similar efficiency. This makes BSTs ideal for applications that require fast access to sorted data, such as databases and file indexing systems.
+Example:
+Key: The value of a field (e.g., CustomerID in a customer database).
+Value: A list of nodes, each representing a record associated with that CustomerID.
+This approach helps in retrieving all rows matching a specific key quickly.
 
-    2. **Huffman Coding Trees**:
-        - Huffman coding, a widely used method in data compression, relies on binary trees to efficiently encode data. It constructs a binary tree where each leaf node corresponds to a character in the data, and the path from the root to the leaf forms the character's binary code. The algorithm assigns shorter codes to more frequent characters and longer codes to less frequent ones, optimizing the overall space used to store the data.
-        - **Example**: In file compression utilities like `.zip` or `.gzip`, Huffman trees are used to reduce the file size by compressing text or binary data. For instance, in a text file where the letter 'e' appears more frequently than the letter 'z', the Huffman tree would assign a shorter binary code to 'e' (e.g., `00`) and a longer code to 'z' (e.g., `11110`). This ensures that common letters take up less space, improving the efficiency of storage or transmission.
+2. Autocompletion in Text Editors
+In an autocomplete feature of a text editor, words or phrases can be stored in a tree-like structure.
+The headerList could map each character or word prefix to all the words that share that prefix, allowing for fast lookup and suggestions based on partial input.
 
-    3. **Game Trees (Game Theory)**:
-        - In game theory, linked binary trees are used to model the possible moves in a game. Each node represents a game state, and the edges represent the transitions between states based on a player's actions. This application is especially useful in strategy games, where AI players can evaluate potential moves by traversing a game tree.
-        - **Example**: Consider a chess game, where each node in the tree represents a possible board configuration, and the edges represent a move made by one of the players. By building a tree of all possible moves, AI can predict future outcomes and choose optimal strategies. For a game like tic-tac-toe, the tree would contain all potential board configurations, starting from the empty grid and branching out to all possible moves until the game ends.
+Example:
+Key: A prefix of a word ("aut", "hel", etc.).
+Value: A list of nodes where each node contains a word that starts with that prefix.
+This can be used to quickly provide a list of suggested words while typing.
 
-    4. **Decision Trees (Machine Learning)**:
-        - Decision trees, a core machine learning model used for classification tasks, are structured as binary trees. Each node represents a decision based on a feature's value, and the leaves represent the outcome or class label. Decision trees are widely used for tasks like classifying data based on certain attributes, making them a fundamental tool in supervised learning.
-        - **Example**: In a spam email classification system, a decision tree might check whether an email contains certain keywords like "discount" or "offer" at each node. If the email contains the word "offer," it might move down the left branch, eventually classifying the email as "spam." If not, it moves to the right branch, where further checks are performed to determine whether the email is "not spam." This decision-making process is efficient and interpretable, making it ideal for applications like spam filtering or customer segmentation.
+----------------- 3. File System Traversal (Directory Indexing)
+In a file system, a tree-like structure can be used to represent directories and files.
+The headerList can store a list of all files or directories with a certain name (in case of duplicates or similar names).
+For instance, files with the same name but different file extensions can be grouped together in a map.
 
-    In summary, linked binary trees are highly valuable in various fields like data compression, artificial intelligence, and machine learning, where their ability to store and organize data efficiently can lead to significant performance improvements. Whether it's fast searching in a database, compressing data for storage, or analyzing game strategies, binary trees provide the foundation for many essential algorithms.
-*/
+Example:
+Key: The name of a file or directory.
+Value: A list of nodes representing different files or directories with that name.
+This can be helpful for organizing or searching directories with multiple files of similar names.
+
+----------------- 4. Text Pattern Matching
+In text analysis or pattern matching, you could use a tree-like structure to represent a document where each node corresponds to a substring.
+The headerList could map substrings (e.g., patterns or phrases) to all occurrences within the document.
+This could be useful in applications like search engines or plagiarism detection.
+
+Example:
+Key: A pattern or phrase (e.g., "lorem", "ipsum").
+Value: A list of nodes where each node corresponds to an occurrence of the pattern or phrase in the document.
+This allows quick retrieval of all occurrences of a particular substring.
+
+----------------- 5. Decision Trees for Machine Learning
+In machine learning, decision trees are often used for classification tasks.
+The headerList could store intermediate nodes at each level of the decision tree, which maps a feature (key) to a list of decision nodes at that feature level.
+This structure allows for efficient classification of data by following the decision path.
+
+Example:
+Key: The feature used for a decision (e.g., "age", "income").
+Value: A list of nodes that correspond to different decision outcomes based on the value of that feature.
+This structure allows for efficient decision-making as the tree is traversed.
+ */
